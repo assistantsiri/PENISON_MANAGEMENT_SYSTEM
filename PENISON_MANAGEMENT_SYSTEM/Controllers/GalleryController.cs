@@ -172,5 +172,148 @@ namespace PENISON_MANAGEMENT_SYSTEM.Controllers
             string fileName = Path.GetFileName(path);
             return File(fileBytes, "application/octet-stream", fileName);
         }
+        public ActionResult GetCategoryWiseImage(string category, string dpCode = null)
+        {
+            var model = new GalleryViewModel
+            {
+                SelectedCategory = category,
+                SelectedDpCode = dpCode,
+                DpCodes = new List<string>(),
+                Images = new List<ImageData>()
+            };
+
+            if (!string.IsNullOrEmpty(category))
+            {
+                string key = "imagefilepaths" + category.ToLower();
+                string rootPath = ConfigurationManager.AppSettings[key];
+
+                if (Directory.Exists(rootPath))
+                {
+                    // STEP 1: Load DP folders
+                    model.DpCodes = Directory.GetDirectories(rootPath)
+                                             .Select(Path.GetFileName)
+                                             .OrderBy(x => x)
+                                             .ToList();
+
+                    // STEP 2: Load images ONLY after DP selected
+                    if (!string.IsNullOrEmpty(dpCode))
+                    {
+                        string dpPath = Path.Combine(rootPath, dpCode);
+
+                        if (Directory.Exists(dpPath))
+                        {
+                            var files = Directory.GetFiles(dpPath, "*.jpg");
+
+                            foreach (var f in files)
+                            {
+                                model.Images.Add(new ImageData
+                                {
+                                    FileName = Path.GetFileName(f),
+                                    FullPath = f.Replace("\\", "/"),
+                                    DpCode = dpCode
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult ConvertDpToPdf(string category, string dpCode)
+        {
+            if (string.IsNullOrEmpty(category) || string.IsNullOrEmpty(dpCode))
+                return RedirectToAction("Index");
+
+            // SOURCE IMAGE PATH
+            string key = "imagefilepaths" + category.ToLower();
+            string rootPath = ConfigurationManager.AppSettings[key];
+            string dpImagePath = Path.Combine(rootPath, dpCode);
+
+            if (!Directory.Exists(dpImagePath))
+                return RedirectToAction("Index", new { category });
+
+            var imageFiles = Directory.GetFiles(dpImagePath, "*.jpg");
+
+            if (imageFiles.Length == 0)
+                return RedirectToAction("Index", new { category, dpCode });
+
+            /* ========= TARGET PDF FOLDER ========= */
+
+            string dpPdfFolder = Path.Combine(Server.MapPath("~/UploadedPdfs"), dpCode);
+            if (!Directory.Exists(dpPdfFolder))
+            {
+                Directory.CreateDirectory(dpPdfFolder);
+            }
+
+            string existingPdfPath = Path.Combine(dpPdfFolder, dpCode + ".pdf");
+            string newPdfPath = Path.Combine(dpPdfFolder, Guid.NewGuid().ToString() + ".pdf");
+
+            /* ========= CREATE PDF FROM JPG ========= */
+
+            using (var fs = new FileStream(newPdfPath, FileMode.Create, FileAccess.Write))
+            {
+                using (var doc = new iTextSharp.text.Document(iTextSharp.text.PageSize.A4))
+                {
+                    PdfWriter.GetInstance(doc, fs);
+                    doc.Open();
+
+                    foreach (var imgPath in imageFiles)
+                    {
+                        var img = iTextSharp.text.Image.GetInstance(imgPath);
+                        img.ScaleToFit(doc.PageSize.Width - 40, doc.PageSize.Height - 40);
+                        img.Alignment = Element.ALIGN_CENTER;
+                        doc.Add(img);
+                        doc.NewPage();
+                    }
+
+                    doc.Close();
+                }
+            }
+
+            /* ========= MERGE IF PDF EXISTS ========= */
+
+            if (System.IO.File.Exists(existingPdfPath))
+            {
+                string mergedPdfPath = Path.Combine(dpPdfFolder, "merged_temp.pdf");
+
+                MergePdfs(existingPdfPath, newPdfPath, mergedPdfPath);
+
+                System.IO.File.Delete(existingPdfPath);
+                System.IO.File.Delete(newPdfPath);
+
+                System.IO.File.Move(mergedPdfPath, existingPdfPath);
+            }
+            else
+            {
+                System.IO.File.Move(newPdfPath, existingPdfPath);
+            }
+
+            return File(existingPdfPath, "application/pdf", dpCode + ".pdf");
+        }
+        private void MergePdfs(string pdf1, string pdf2, string outputPath)
+        {
+            using (var stream = new FileStream(outputPath, FileMode.Create))
+            {
+                var document = new iTextSharp.text.Document();
+                var pdf = new PdfCopy(document, stream);
+                document.Open();
+
+                foreach (string file in new[] { pdf1, pdf2 })
+                {
+                    var reader = new PdfReader(file);
+                    for (int i = 1; i <= reader.NumberOfPages; i++)
+                    {
+                        pdf.AddPage(pdf.GetImportedPage(reader, i));
+                    }
+                    reader.Close();
+                }
+
+                document.Close();
+            }
+        }
+
     }
 }

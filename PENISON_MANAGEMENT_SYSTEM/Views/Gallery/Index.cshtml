@@ -1,0 +1,512 @@
+﻿@model PENISON_MANAGEMENT_SYSTEM.Models.GalleryViewModel
+
+<style>
+    /* Modern Gallery Styles */
+    /*.gallery-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    .gallery-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 25px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+        .gallery-header h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+            .gallery-header h2: efore {
+                content: "??";
+                margin-right: 15px;
+                font-size: 2.5rem;
+            }*/
+
+    /* Search Form Styling */
+    .gallery-filters {
+        background: white;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        margin-bottom: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        align-items: flex-end;
+        border: 1px solid #eaeaea;
+    }
+
+    .filter-group {
+        flex: 1;
+        min-width: 200px;
+    }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+    .styled-select {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #e8ecf1;
+        border-radius: 10px;
+        font-size: 15px;
+        color: #2c3e50;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        background-size: 16px;
+    }
+
+        .styled-select ocus {
+            outline: none;
+            border-color: #5d78ff;
+            box-shadow: 0 0 0 3px rgba(93, 120, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+    .styled-input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #e8ecf1;
+        border-radius: 10px;
+        font-size: 15px;
+        color: #2c3e50;
+        background: white;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+        .styled-input ocus {
+            outline: none;
+            border-color: #5d78ff;
+            box-shadow: 0 0 0 3px rgba(93, 120, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .styled-input: laceholder {
+            color: #95a5a6;
+        }
+
+    .search-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 52px;
+    }
+
+        .search-btn over {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .search-btn: efore {
+            content: "??";
+            font-size: 18px;
+        }
+
+    /* Gallery Grid */
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 30px;
+        margin-bottom: 50px;
+    }
+
+    .gallery-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #f0f0f0;
+    }
+
+        .gallery-card over {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+    /* Image Frame */
+    .image-frame {
+        position: relative;
+        height: 220px;
+        overflow: hidden;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+        .image-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+    .gallery-card over .image-frame img {
+        transform: scale(1.05);
+    }
+
+    .image-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.7));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .gallery-card over .image-overlay {
+        opacity: 1;
+    }
+
+    /* Card Content */
+    .card-content {
+        padding: 20px;
+        background: white;
+    }
+
+    .image-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        color: #555;
+    }
+
+    .meta-label {
+        font-weight: 600;
+        color: #2c3e50;
+        min-width: 60px;
+    }
+
+    .meta-value {
+        color: #666;
+        font-family: 'Consolas', monospace;
+    }
+
+    .download-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        margin-top: 15px;
+        box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+    }
+
+        .download-btn over {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(46, 204, 113, 0.4);
+            color: white;
+        }
+
+        .download-btn: efore {
+            content: "??";
+        }
+
+    /* Pagination */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 50px;
+        padding-top: 30px;
+        border-top: 1px solid #eee;
+    }
+
+    .pagination-link, .pagination-current {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 45px;
+        height: 45px;
+        padding: 0 5px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 15px;
+    }
+
+    .pagination-link {
+        background: #f8f9fa;
+        color: #495057;
+        border: 2px solid #e9ecef;
+    }
+
+        .pagination-link over {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+    .pagination-current {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        margin: 40px 0;
+    }
+
+        .empty-state h3 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .empty-state p {
+            color: #7f8c8d;
+            font-size: 16px;
+            max-width: 500px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+
+    .empty-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .gallery-container {
+            padding: 20px;
+        }
+
+        .gallery-header h2 {
+            font-size: 2rem;
+        }
+
+        .gallery-filters {
+            flex-direction: column;
+        }
+
+        .filter-group {
+            min-width: 100%;
+        }
+
+        .gallery-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .search-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .gallery-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .pagination-link, .pagination-current {
+            min-width: 40px;
+            height: 40px;
+            font-size: 14px;
+        }
+    }
+
+    /* Animation for new images */
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .gallery-card {
+        animation: fadeInUp 0.6s ease forwards;
+    }
+
+    /* Stagger animation delay */
+    .gallery-grid .gallery-card:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+
+    .gallery-grid .gallery-card:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .gallery-grid .gallery-card:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+
+    .gallery-grid .gallery-card:nth-child(4) {
+        animation-delay: 0.4s;
+    }
+
+    .gallery-grid .gallery-card:nth-child(5) {
+        animation-delay: 0.5s;
+    }
+
+    .gallery-grid .gallery-card:nth-child(6) {
+        animation-delay: 0.6s;
+    }
+</style>
+
+
+
+<div class="gallery-container">
+    <div class="gallery-header">
+        <h2>EXISTING IMAGE</h2>
+        <p style="color: #7f8c8d; font-size: 16px; max-width: 600px; margin: 0 auto;">
+            CENTRALIZED PENSION MODULE ...
+        </p>
+    </div>
+
+    <!-- Search & Filter Form -->
+    <form method="get" class="gallery-filters">
+        <div class="filter-group">
+            <label for="category">Category</label>
+            <select name="category" id="category" class="styled-select">
+                <option value="">-- All Categories --</option>
+                <option value="Railways" @(Model.SelectedCategory == "Railways" ? "selected" : "")>Railways</option>
+                <option value="Postal" @(Model.SelectedCategory == "Postal" ? "selected" : "")>Postal</option>
+                <option value="Telecom" @(Model.SelectedCategory == "Telecom" ? "selected" : "")>Telecom</option>
+                <option value="StatePension" @(Model.SelectedCategory == "StatePension" ? "selected" : "")>StatePension</option>
+                <option value="DefenceCivil" @(Model.SelectedCategory == "DefenceCivil" ? "selected" : "")>Defence Civil</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="searchText">Search Account</label>
+            <input type="text"
+                   name="searchText"
+                   id="searchText"
+                   class="styled-input"
+                   placeholder="Enter account number..."
+                   value="@Model.SearchText" />
+        </div>
+
+        <div class="filter-group">
+            <button type="submit" class="search-btn">
+                Search
+            </button>
+        </div>
+    </form>
+
+    <!-- Images Grid -->
+    @if (Model.Images != null && Model.Images.Count > 0)
+    {
+        <div class="gallery-grid">
+            @foreach (var img in Model.Images)
+            {
+                <div class="gallery-card">
+                    <div class="image-frame">
+                        <img src="/Gallery/ViewImage?path=@img.FullPath"
+                             alt="@img.FileName"
+                             loading="lazy" />
+                        <div class="image-overlay"></div>
+                    </div>
+
+                    <div class="card-content">
+                        <div class="image-meta">
+                            <div class="meta-item">
+                                <span class="meta-label">DP Code:</span>
+                                <span class="meta-value">@img.DpCode</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">File:</span>
+                                <span class="meta-value" style="font-size: 12px;">@img.FileName</span>
+                            </div>
+                        </div>
+
+                        <a href="/Gallery/Download?path=@img.FullPath"
+                           class="download-btn">
+                            Download
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                if (i == Model.Page)
+                {
+                    <span class="pagination-current">@i</span>
+                }
+                else
+                {
+                    <a href="?category=@Model.SelectedCategory&page=@i&searchText=@Model.SearchText"
+                       class="pagination-link">
+                        @i
+                    </a>
+                }
+            }
+        </div>
+    }
+    else
+    {
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-icon">😞</div>
+            <h3>No images found</h3>
+            <p>Try adjusting your search criteria or select a different category to find what you're looking for.</p>
+        </div>
+    }
+</div>

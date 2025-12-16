@@ -1,0 +1,236 @@
+﻿@{
+    ViewBag.Title = "SFTP File Upload";
+}
+
+@*<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">*@
+@*<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">*@
+<link href="~/assets/SweetAlert/sweetalert2.min.css" rel="stylesheet" />
+<link href="~/assets/Awesome/fontawesome-free-6.1.1-web/css/all.css" rel="stylesheet" />
+<link href="~/assets/Awesome/fontawesome-free-6.1.1-web/css/all.min.css" rel="stylesheet" />
+<link href="~/assets/css/SFTP.css" rel="stylesheet" />
+<style>
+    .upload-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .upload-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .upload-header h2 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+
+    .file-upload-wrapper {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .file-upload-label {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border: 2px dashed #3498db;
+        border-radius: 5px;
+        background: #f8f9fa;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .file-upload-label:hover {
+        border-color: #2980b9;
+        background: #e9f5ff;
+    }
+
+    .file-upload-icon {
+        margin-right: 15px;
+        color: #3498db;
+        font-size: 24px;
+    }
+
+    .file-upload-text {
+        flex-grow: 1;
+        color: #555;
+    }
+
+    .file-upload-input {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    .file-info {
+        margin-top: 10px;
+        padding: 10px;
+        background: #f1f1f1;
+        border-radius: 5px;
+        display: none;
+    }
+
+    .file-name {
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .upload-button {
+        width: 100%;
+        padding: 12px;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .upload-button:hover {
+        background: #2980b9;
+    }
+
+    .upload-button:disabled {
+        background: #95a5a6;
+        cursor: not-allowed;
+    }
+
+    .spinner {
+        display: none;
+        margin: 0 auto;
+        width: 70px;
+        text-align: center;
+    }
+
+    .spinner > div {
+        width: 12px;
+        height: 12px;
+        background-color: #fff;
+        border-radius: 100%;
+        display: inline-block;
+        animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+    }
+
+    .spinner .bounce1 {
+        animation-delay: -0.32s;
+    }
+
+    .spinner .bounce2 {
+        animation-delay: -0.16s;
+    }
+
+   
+</style>
+
+<div class="upload-container">
+    <div class="upload-header">
+        <h2><i class="fas fa-cloud-upload-alt"></i> SFTP File Upload</h2>
+        <p>Securely transfer files to the remote server</p>
+    </div>
+
+    @using (Html.BeginForm("SFTPUPLOADDATA", "SFTP", FormMethod.Post, new { enctype = "multipart/form-data", id = "uploadForm" }))
+    {
+        <div class="file-upload-wrapper">
+            <label class="file-upload-label">
+                <i class="fas fa-file-upload file-upload-icon"></i>
+                <span class="file-upload-text">Choose a file to upload...</span>
+                <input type="file" name="uploadedFile" id="uploadedFile" class="file-upload-input" required />
+            </label>
+            <div class="file-info" id="fileInfo">
+                <span class="file-name" id="fileName"></span>
+            </div>
+        </div>
+
+        <button type="submit" class="upload-button" id="uploadButton">
+            <span id="buttonText">Upload File</span>
+            <div class="spinner" id="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+        </button>
+    }
+</div>
+
+@*<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>*@
+<script src="~/assets/JQUERY/jquery-3.6.0/dist/jquery.min.js"></script>
+@*<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>*@
+<script src="~/assets/SweetAlert/sweetalert2.all.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Show selected file name
+        $('#uploadedFile').change(function() {
+            var fileName = $(this).val().split('\\').pop();
+            if (fileName) {
+                $('#fileInfo').show();
+                $('#fileName').text(fileName);
+            } else {
+                $('#fileInfo').hide();
+            }
+        });
+
+        // Form submission with loading indicator
+        $('#uploadForm').submit(function(e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+            var button = $('#uploadButton');
+            var spinner = $('#spinner');
+            var buttonText = $('#buttonText');
+
+            // Show loading state
+            button.prop('disabled', true);
+            buttonText.text('Uploading...');
+            spinner.show();
+
+            // Submit form via AJAX
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    // Handle response via TempData message
+                    window.location.href = '@Url.Action("SFTPUPLOADDATA")';
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred during upload',
+                        confirmButtonColor: '#3498db'
+                    });
+                },
+                complete: function() {
+                    button.prop('disabled', false);
+                    buttonText.text('Upload File');
+                    spinner.hide();
+                }
+            });
+        });
+
+        // Show TempData message if exists
+        @if (TempData["Message"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: '@(TempData["Message"].ToString().Contains("successfully") ? "success" : "error")',
+                title: '@(TempData["Message"].ToString().Contains("successfully") ? "Success" : "Error")',
+                text: '@TempData["Message"]',
+                confirmButtonColor: '#3498db'
+            });
+            </text>
+        }
+    });
+</script>

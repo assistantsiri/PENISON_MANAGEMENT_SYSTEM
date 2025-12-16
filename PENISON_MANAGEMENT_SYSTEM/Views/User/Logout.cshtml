@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "Logout";
+    Layout = null;
+}
+<span></span>
+<script src="~/assets/SweetAlert/sweetalert2.all.min.js"></script>
+<script>
+    const logoutMessage = '@(TempData["Logoutsuccessfully"] != null ? (string)TempData["Logoutsuccessfully"] : string.Empty)';
+    const logmessageType = '@(TempData["Messageresult"] != null ? (string)TempData["Messageresult"] : string.Empty)';
+
+    if (logoutMessage && logoutMessage.length > 0)
+    {
+        const isSuccess = logmessageType === 'success';
+
+        Swal.fire({
+            icon: isSuccess ? 'success' : 'error',
+            title: isSuccess ? 'Success' : 'Error',
+            text: logoutMessage,
+            confirmButtonText: 'OK',
+            confirmButtonColor: isSuccess ? '#4361ee' : '#f44336',
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        })
+        .then((result) => {
+
+            if (result.isConfirmed || result.dismiss === Swal.DismissReason.backdrop) {
+
+                window.location.href = '@Url.Action("Login", "User")';
+            }
+        });
+    } else {
+
+        window.location.href = '@Url.Action("Login", "User")';
+    }
+
+
+    @{
+        TempData.Keep("Logoutsuccessfully");
+        TempData.Keep("Messageresult");
+    }
+</script>

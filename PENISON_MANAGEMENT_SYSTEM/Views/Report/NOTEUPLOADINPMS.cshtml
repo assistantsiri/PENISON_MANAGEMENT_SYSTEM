@@ -1,0 +1,292 @@
+﻿@model  PENISON_MANAGEMENT_SYSTEM.Models.UploadModelForFile
+
+@{
+    ViewBag.Title = "Document Upload";
+}
+
+<div class="upload-container">
+    <h2 class="text-center mb-4"><i class="fas fa-file-upload me-2"></i>Document Upload</h2>
+
+    <div class="tab-container">
+        <ul class="nav nav-tabs" id="uploadTabs">
+            <li class="nav-item">
+                <a class="nav-link active" id="tab-1" data-toggle="tab" href="#content-1">Upload 1</a>
+            </li>
+            <li class="nav-item">
+                <button class="add-tab-btn" id="addTabBtn"><i class="fas fa-plus"></i></button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="tab-content" id="uploadTabContent">
+        <div class="tab-pane fade show active" id="content-1">
+            @using (Html.BeginForm("Upload", "Upload", FormMethod.Post, new { enctype = "multipart/form-data", id = "uploadForm1" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.AccountType, new { @class = "form-label" })
+                    @Html.DropDownListFor(m => m.AccountType, new SelectList(Model.AccountTypes), "Select Account Type", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.AccountType, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.FileName, new { @class = "form-label" })
+                    @Html.TextBoxFor(m => m.FileName, new { @class = "form-control", placeholder = "Enter file name" })
+                    @Html.ValidationMessageFor(m => m.FileName, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="upload-area" id="dropArea1">
+                    <i class="fas fa-file-archive"></i>
+                    <h5>Upload Your ZIP File</h5>
+                    <p class="text-muted">Maximum file size: 50MB</p>
+
+                    <div class="file-input-wrapper">
+                        <button type="button" class="file-select-btn" id="selectFileBtn1">
+                            <i class="fas fa-folder-open me-2"></i>Choose File
+                        </button>
+                        <input type="file" name="Document" id="fileInput1" class="d-none" accept=".zip" />
+                    </div>
+
+                    <div id="fileInfo1"></div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-upload">
+                        <i class="fas fa-upload me-2"></i>Upload Document
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize tab counter
+            let tabCounter = 1;
+
+            // Add new tab functionality
+            $('#addTabBtn').click(function(e) {
+                e.preventDefault();
+                tabCounter++;
+                const newTabId = `tab-${tabCounter}`;
+                const newContentId = `content-${tabCounter}`;
+                const newFormId = `uploadForm${tabCounter}`;
+                const newFileInputId = `fileInput${tabCounter}`;
+                const newDropAreaId = `dropArea${tabCounter}`;
+                const newFileInfoId = `fileInfo${tabCounter}`;
+                const newSelectFileBtnId = `selectFileBtn${tabCounter}`;
+
+                // Add new tab
+                $(`<li class="nav-item">
+                    <a class="nav-link" id="${newTabId}" data-toggle="tab" href="#${newContentId}">Upload ${tabCounter}</a>
+                </li>`).insertBefore($(this).parent());
+
+                // Add new content
+                $(`<div class="tab-pane fade" id="${newContentId}">
+                    <form action="@Url.Action("Upload", "Upload")" method="post" enctype="multipart/form-data" id="${newFormId}">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label class="form-label">Account Type</label>
+                            <select class="form-control" name="AccountType">
+                                <option value="">Select Account Type</option>
+                                <option value="RAILWAYS">RAILWAYS</option>
+                                <option value="STATE">STATE</option>
+                                <option value="POSTAL">POSTAL</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">File Name</label>
+                            <input type="text" class="form-control" name="FileName" placeholder="Enter file name" />
+                        </div>
+
+                        <div class="upload-area" id="${newDropAreaId}">
+                            <i class="fas fa-file-archive"></i>
+                            <h5>Upload Your ZIP File</h5>
+                            <p class="text-muted">Maximum file size: 50MB</p>
+
+                            <div class="file-input-wrapper">
+                                <button type="button" class="file-select-btn" id="${newSelectFileBtnId}">
+                                    <i class="fas fa-folder-open me-2"></i>Choose File
+                                </button>
+                                <input type="file" name="Document" id="${newFileInputId}" class="d-none" accept=".zip" />
+                            </div>
+
+                            <div id="${newFileInfoId}"></div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-upload">
+                                <i class="fas fa-upload me-2"></i>Upload Document
+                            </button>
+                        </div>
+                    </form>
+                </div>`).appendTo('#uploadTabContent');
+
+                // Initialize file upload for new tab
+                initFileUpload(newFileInputId, newDropAreaId, newFileInfoId, newSelectFileBtnId);
+
+                // Activate the new tab
+                $(`#${newTabId}`).tab('show');
+            });
+
+            // Initialize file upload for first tab
+            initFileUpload('fileInput1', 'dropArea1', 'fileInfo1', 'selectFileBtn1');
+
+            // Show success/error messages
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '@TempData["SuccessMessage"]',
+                    confirmButtonColor: '#0d6efd'
+                });
+                </text>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: '@TempData["ErrorMessage"]',
+                    confirmButtonColor: '#0d6efd'
+                });
+                </text>
+            }
+
+            // Initialize Bootstrap tabs
+            $('#uploadTabs a').on('click', function(e) {
+                e.preventDefault();
+                $(this).tab('show');
+            });
+        });
+
+        function initFileUpload(fileInputId, dropAreaId, fileInfoId, selectFileBtnId) {
+            const fileInput = document.getElementById(fileInputId);
+            const dropArea = document.getElementById(dropAreaId);
+            const fileInfo = document.getElementById(fileInfoId);
+            const selectFileBtn = document.getElementById(selectFileBtnId);
+
+            // Click event for select file button
+            selectFileBtn.addEventListener('click', function() {
+                fileInput.click();
+            });
+
+            // Handle selected files
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    const file = this.files[0];
+                    validateAndProcessFile(file);
+                }
+            });
+
+            // Drag and drop events
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                dropArea.classList.add('border-primary');
+                dropArea.style.backgroundColor = '#f8f9fa';
+            }
+
+            function unhighlight() {
+                dropArea.classList.remove('border-primary');
+                dropArea.style.backgroundColor = '';
+            }
+
+            // Handle dropped files
+            dropArea.addEventListener('drop', function(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+
+                if (files.length > 0) {
+                    const file = files[0];
+                    fileInput.files = files;
+                    validateAndProcessFile(file);
+                }
+            });
+
+            function validateAndProcessFile(file) {
+                if (file.name.toLowerCase().endsWith('.zip')) {
+                    if (file.size > 50 * 1024 * 1024) { // 50MB limit
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'File Too Large',
+                            text: 'Maximum file size is 50MB',
+                            confirmButtonColor: '#0d6efd'
+                        });
+                        fileInput.value = '';
+                        updateFileInfo(null);
+                    } else {
+                        updateFileInfo(file);
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid File',
+                        text: 'Only ZIP files are allowed',
+                        confirmButtonColor: '#0d6efd'
+                    });
+                    fileInput.value = '';
+                    updateFileInfo(null);
+                }
+            }
+
+            function updateFileInfo(file) {
+                if (file) {
+                    fileInfo.innerHTML = `
+                        <div class="file-card">
+                            <button class="clear-file-btn" title="Remove file">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="file-name">
+                                <i class="fas fa-file-archive me-2"></i>${file.name}
+                            </div>
+                            <div class="file-size">
+                                ${formatFileSize(file.size)}
+                            </div>
+                        </div>
+                    `;
+
+                    // Add event listener to clear button
+                    fileInfo.querySelector('.clear-file-btn').addEventListener('click', function() {
+                        fileInput.value = '';
+                        updateFileInfo(null);
+                    });
+                } else {
+                    fileInfo.innerHTML = '';
+                }
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
+            }
+        }
+    </script>
+}

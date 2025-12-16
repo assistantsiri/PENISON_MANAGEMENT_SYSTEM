@@ -1,0 +1,579 @@
+﻿@{
+    ViewBag.Title = "Bulk File Upload System";
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @*<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">*@
+    @*<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">*@
+
+    <link href="~/assets/Bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/assets/Awesome/fontawesome-free-6.1.1-web/css/all.css" rel="stylesheet" />
+    <link href="~/assets/Awesome/fontawesome-free-6.1.1-web/css/all.min.css" rel="stylesheet" />
+    <style>
+        /* Custom styles */
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: #0d6efd;
+            color: white;
+            font-weight: 600;
+            padding: 15px 20px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 40px 20px;
+            border: 2px dashed #ced4da;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+            .file-input-label:hover {
+                border-color: #0d6efd;
+                background-color: #f8f9fa;
+            }
+
+            .file-input-label i {
+                font-size: 48px;
+                color: #0d6efd;
+                margin-bottom: 10px;
+            }
+
+        .btn-upload {
+            background-color: #0d6efd;
+            color: white;
+            font-weight: 500;
+            padding: 10px 25px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+            .btn-upload:hover {
+                background-color: #0b5ed7;
+                transform: translateY(-2px);
+            }
+
+        .table th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .file-item {
+            transition: all 0.3s;
+        }
+
+            .file-item:hover {
+                background-color: #f8f9fa;
+            }
+
+        .remove-file {
+            color: #dc3545;
+            cursor: pointer;
+        }
+
+        .progress {
+            height: 8px;
+            margin-top: 5px;
+        }
+
+        .stylish-upload-btn {
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .stylish-upload-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+                background: linear-gradient(to right, #3a7bd5 0%, #00d2ff 100%);
+            }
+
+            .stylish-upload-btn:active {
+                transform: translateY(0);
+            }
+
+        .upload-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 24 24'%3E%3Cpath d='M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z'/%3E%3C/svg%3E");
+            background-size: contain;
+        }
+
+        .alert-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .alert-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 350px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+            animation: fadeIn 0.3s ease-out;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 22px;
+            cursor: pointer;
+            color: #888;
+        }
+
+            .close-btn:hover {
+                color: #333;
+            }
+
+        .alert-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            background-color: #ff4444;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .alert-content h3 {
+            margin: 0 0 10px;
+            color: #333;
+        }
+
+        .alert-content p {
+            margin: 0;
+            color: #666;
+            font-size: 16px;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="text-center mb-4">
+            <h2><i class="fas fa-file-archive me-2"></i>UPLOAD NOTES,PDF,DOCUMENT IN ZIP</h2>
+            <p class="text-muted">UPLOAD MULTIPLE FILES WITH CUSTOM NAMING</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i> Add Files</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Select ZIP Files/Folders</label>
+                            <label for="fileInput" class="file-input-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <h5>CLICK TO BROWSE FILES</h5>
+                                @*<p class="text-muted">or drag and drop files here</p>*@
+                                <span id="fileCount" class="d-block text-primary fw-bold"></span>
+                            </label>
+                            <button type="button" class="stylish-upload-btn" onclick="document.getElementById('fileInput').click()">
+                                <i class="upload-icon"></i> CHOOSE FILES
+                            </button>
+                            <input type="file" class="d-none" id="fileInput" name="files" multiple accept=".zip,.rar,.7z">
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        @*<div class="mb-3">
+                                <label for="accountType" class="form-label">Account Type</label>
+                                <select class="form-select" id="accountType" required>
+                                    <option value="">-- Select Account Type --</option>
+                                    <option value="RAILWAYS">RAILWAYS</option>
+                                    <option value="POSTAL">POSTAL</option>
+                                    <option value="CIVIL">CIVIL</option>
+                                    <option value="STATE">STATE</option>
+                                </select>
+                                <div class="invalid-feedback">Please select an account type</div>
+                            </div>*@
+                        <div class="mb-3">
+                            <label for="customName" class="form-label">Account Type</label>
+                            <input type="text" class="form-control" id="accountType" placeholder="Enter Account Type" required>
+                            <div class="invalid-feedback">Please enter a Account Type</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="customName" class="form-label">Custom File Name Prefix</label>
+                            <input type="text" class="form-control" id="customName" placeholder="Enter custom file name prefix" required>
+                            <div class="invalid-feedback">Please enter a file name prefix</div>
+                        </div>
+                        <button id="addFilesBtn" class="btn btn-upload w-100">
+                            <i class="fas fa-plus-circle me-2"></i> Add to Upload List
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-list me-2"></i> Files Ready for Upload</h5>
+                <div>
+                    <span id="totalFilesCount" class="badge bg-primary me-2">0 files</span>
+                    <button id="uploadAllBtn" class="btn btn-upload btn-sm" disabled>
+                        <i class="fas fa-upload me-1"></i> Upload All
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="progress d-none" id="uploadProgress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="uploadQueueTable">
+                        <thead>
+                            <tr>
+                                <th width="30%">File Name</th>
+                                <th width="20%">Custom Name</th>
+                                <th width="15%">Account Type</th>
+                                <th width="10%">Size</th>
+                                <th width="15%">Status</th>
+                                <th width="10%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="noFilesMessage" class="text-center py-5">
+                    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No files in upload queue</h5>
+                    <p class="text-muted">Add files to begin uploading</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" id="successToast">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="fas fa-check-circle me-2"></i>
+                <span id="toastMessage">Files uploaded successfully!</span>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+    @*alert message*@
+    <div id="stylishAlert" class="alert-modal">
+        <div class="alert-content">
+            <span class="close-btn">&times;</span>
+            <div class="alert-icon">!</div>
+            <h3>File Required</h3>
+            <p>Please select at least one file</p>
+        </div>
+    </div>
+    @*alert message*@
+    @*<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>*@
+    @*<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>*@
+
+    <script src="~/assets/Bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/JQUERY/jquery-3.6.0/dist/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            const fileQueue = [];
+            const toast = new bootstrap.Toast(document.getElementById('successToast'));
+
+
+            $('#fileInput').change(function() {
+                if (this.files && this.files.length > 0) {
+                    const count = this.files.length;
+                    $('#fileCount').text(`${count} file${count > 1 ? 's' : ''} selected`);
+                }
+            });
+
+
+            $('.file-input-label').on('dragover', function(e) {
+                e.preventDefault();
+                $(this).addClass('border-primary');
+            });
+
+            $('.file-input-label').on('dragleave', function(e) {
+                e.preventDefault();
+                $(this).removeClass('border-primary');
+            });
+
+            $('.file-input-label').on('drop', function(e) {
+                e.preventDefault();
+                $(this).removeClass('border-primary');
+
+                if (e.originalEvent.dataTransfer.files.length) {
+                    $('#fileInput')[0].files = e.originalEvent.dataTransfer.files;
+                    const count = e.originalEvent.dataTransfer.files.length;
+                    $('#fileCount').text(`${count} file${count > 1 ? 's' : ''} selected`);
+                }
+            });
+
+
+            $('#addFilesBtn').click(function() {
+                const files = $('#fileInput')[0].files;
+                const accountType = $('#accountType').val();
+                const customName = $('#customName').val();
+
+
+                if (!files || files.length === 0) {
+
+                    showAlert();
+                    return;
+                }
+
+                if (!accountType) {
+                    $('#accountType').addClass('is-invalid');
+                    return;
+                } else {
+                    $('#accountType').removeClass('is-invalid');
+                }
+
+                if (!customName) {
+                    $('#customName').addClass('is-invalid');
+                    return;
+                } else {
+                    $('#customName').removeClass('is-invalid');
+                }
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const fileId = Date.now() + i;
+                    const customFileName = customName + (files.length > 1 ? `_${i + 1}` : '');
+
+                    fileQueue.push({
+                        id: fileId,
+                        file: file,
+                        accountType: accountType,
+                        customName: customFileName,
+                        date: new Date(),
+                        status: 'Pending'
+                    });
+
+                    addFileToQueue(fileId, file, accountType, customFileName);
+                }
+
+
+                updateQueueStatus();
+                $('#fileInput').val('');
+                $('#fileCount').text('');
+                $('#uploadAllBtn').prop('disabled', false);
+                $('#noFilesMessage').hide();
+            });
+
+
+            $(document).on('click', '.remove-file', function() {
+                const fileId = parseInt($(this).data('id'));
+                const index = fileQueue.findIndex(f => f.id === fileId);
+
+                if (index > -1) {
+                    fileQueue.splice(index, 1);
+                    $(this).closest('tr').remove();
+                    updateQueueStatus();
+
+                    if (fileQueue.length === 0) {
+                        $('#noFilesMessage').show();
+                        $('#uploadAllBtn').prop('disabled', true);
+                    }
+                }
+            });
+
+
+            $('#uploadAllBtn').click(function() {
+                if (fileQueue.length === 0) return;
+
+
+                $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Uploading...');
+                $('#uploadProgress').removeClass('d-none');
+
+
+                const formData = new FormData();
+                const fileData = [];
+
+
+                fileQueue.forEach((item, index) => {
+                    formData.append("files", item.file);
+                    fileData.push({
+                        originalName: item.file.name,
+                        customName: item.customName,
+                        accountType: item.accountType,
+                        size: item.file.size
+                    });
+
+
+                    item.status = 'Uploading';
+                    $(`tr[data-id="${item.id}"] .status`).html('<span class="text-primary">Uploading...</span>');
+                });
+
+                formData.append("fileData", JSON.stringify(fileData));
+
+
+                $.ajax({
+                    url: '@Url.Action("NOTEANDDOCUMENTUPLOAD", "Report")',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    xhr: function() {
+                        const xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener('progress', function(e) {
+                            if (e.lengthComputable) {
+                                const percentComplete = Math.round((e.loaded / e.total) * 100);
+                                $('#uploadProgress .progress-bar').css('width', percentComplete + '%');
+                            }
+                        }, false);
+                        return xhr;
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            showToast(response.message);
+
+
+                            fileQueue.forEach(item => {
+                                item.status = 'Completed';
+                                $(`tr[data-id="${item.id}"] .status`).html('<span class="text-success">Completed</span>');
+                                $(`tr[data-id="${item.id}"] .remove-file`).remove();
+                            });
+
+
+                            setTimeout(() => {
+                                fileQueue.length = 0;
+                                $('#uploadQueueTable tbody').empty();
+                                $('#noFilesMessage').show();
+                                $('#uploadProgress').addClass('d-none').find('.progress-bar').css('width', '0%');
+                            }, 2000);
+                        } else {
+                            showToast(response.message);
+                            fileQueue.forEach(item => {
+                                item.status = 'Failed';
+                                $(`tr[data-id="${item.id}"] .status`).html('<span class="text-danger">Failed</span>');
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        showToast("Error uploading files: " + error);
+                        fileQueue.forEach(item => {
+                            item.status = 'Failed';
+                            $(`tr[data-id="${item.id}"] .status`).html('<span class="text-danger">Failed</span>');
+                        });
+                    },
+                    complete: function() {
+                        $('#uploadAllBtn').prop('disabled', false)
+                            .html('<i class="fas fa-upload me-1"></i> Upload All');
+                    }
+                });
+            });
+
+
+            function addFileToQueue(id, file, accountType, customName) {
+                $('#uploadQueueTable tbody').append(`
+                    <tr class="file-item" data-id="${id}">
+                        <td>${file.name}</td>
+                        <td>${customName}</td>
+                        <td>${accountType}</td>
+                        <td>${formatFileSize(file.size)}</td>
+                        <td class="status"><span class="text-muted">Pending</span></td>
+                        <td class="text-center">
+                            <i class="fas fa-times remove-file" data-id="${id}"></i>
+                        </td>
+                    </tr>
+                `);
+            }
+            function showAlert() {
+                const alertModal = document.getElementById('stylishAlert');
+                alertModal.style.display = 'flex';
+
+
+                alertModal.querySelector('.close-btn').onclick = () => alertModal.style.display = 'none';
+                alertModal.onclick = (e) => {
+                    if (e.target === alertModal) alertModal.style.display = 'none';
+                };
+            }
+
+            function updateQueueStatus() {
+                $('#totalFilesCount').text(`${fileQueue.length} file${fileQueue.length !== 1 ? 's' : ''}`);
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            function showToast(message) {
+                $('#toastMessage').text(message);
+                toast.show();
+            }
+        });
+    </script>
+</body>
+</html>

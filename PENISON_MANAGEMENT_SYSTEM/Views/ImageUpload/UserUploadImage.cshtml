@@ -1,0 +1,127 @@
+﻿@model PENISON_MANAGEMENT_SYSTEM.Models.Imageupload
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />*@
+<link href="~/assets/Awesome/fontawesome-free-6.1.1-web/css/all.css" rel="stylesheet" />
+<link href="~/assets/Awesome/fontawesome-free-6.1.1-web/css/all.min.css" rel="stylesheet" />
+<div class="container-fluid mt-1">
+    <!--<div class="row g-4">-->
+
+        <!-- Card 1: CIVIL -->
+        <!--<div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card shadow-sm border-0 rounded-4 bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title" style="text-align:center">
+                        <i class="fa-solid fa-city me-2" style="color:yellowgreen"></i><b>CIVIL</b>
+                    </h5>
+                    <p class="display-6 fw-bold">1,245</p>
+                    <p class="mb-0">Since last month</p>
+                </div>
+            </div>
+        </div>-->
+
+        <!-- Card 2: RAILWAYS -->
+        <!--<div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card shadow-sm border-0 rounded-4 bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title" style="text-align:center">
+                        <i class="fa-solid fa-train-subway me-2" style="color:gold;"></i><b>RAILWAYS</b>
+                    </h5>
+                    <p class="display-6 fw-bold">₹7.5L</p>
+                    <p class="mb-0">This quarter</p>
+                </div>
+            </div>
+        </div>-->
+
+        <!-- Card 3: TELECOM -->
+        <!--<div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card shadow-sm border-0 rounded-4 bg-warning text-dark">
+                <div class="card-body">
+                    <h5 class="card-title" style="text-align:center">
+                        <i class="fa-solid fa-tower-cell me-2" style="color:red;"></i> <b>TELECOM</b>
+                    </h5>
+                    <p class="display-6 fw-bold">38</p>
+                    <p class="mb-0">Awaiting approval</p>
+                </div>
+            </div>
+        </div>-->
+
+        <!-- Card 4: POSTAL -->
+        <!--<div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card shadow-sm border-0 rounded-4 bg-danger text-white">
+                <div class="card-body">
+                    <h5 class="card-title" style="text-align:center">
+                        <i class="fa-solid fa-envelope-open-text me-2" style="color:green"></i><b> POSTAL</b>
+                    </h5>
+                    <p class="display-6 fw-bold">5</p>
+                    <p class="mb-0">This week</p>
+                </div>
+            </div>
+        </div>
+
+    </div>-->
+
+
+
+    <div class="container mt-4">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-header bg-primary text-white text-center rounded-top-4">
+                <h3><i class="fa-solid fa-upload me-2"></i> Upload Folder</h3>
+            </div>
+            <div class="card-body p-4">
+
+                @using (Html.BeginForm("UserUploadImage", "ImageUpload", FormMethod.Post, new { enctype = "multipart/form-data", @id = "uploadForm" }))
+                {
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fa-solid fa-folder-open"></i> Select Folder</label>
+                        <input type="file" name="UploadedFiles" multiple webkitdirectory directory class="form-control" required />
+                        <small class="form-text text-muted">Only supported in Chrome/Edge.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fa-solid fa-list"></i> Account Type</label>
+                        @Html.DropDownListFor(m => m.AccountType, (SelectList)ViewBag.AccountTypeList, "-- Select --", new { @class = "form-control", required = "required" })
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success px-4">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Upload
+                        </button>
+                    </div>
+                }
+
+                <div id="loader" class="text-center mt-3" style="display: none;">
+                    <img src="~/Content/images/loader.gif" alt="Loading..." width="60" />
+                    <p>Uploading, please wait...</p>
+                </div>
+
+                @if (TempData["Message"] != null)
+                {
+                    <div class="d-flex justify-content-center mt-4">
+                        <div class="card text-white bg-success shadow rounded-4" style="width: 22rem;">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">
+                                    <i class="fa-solid fa-circle-check fa-lg me-2"></i>Success
+                                </h5>
+                                <p class="card-text">@TempData["Message"]</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+    @section Scripts {
+        <script>
+            document.getElementById("uploadForm").addEventListener("submit", function () {
+                document.getElementById("loader").style.display = "block";
+            });
+        </script>
+    }
+</div>
+
+
+

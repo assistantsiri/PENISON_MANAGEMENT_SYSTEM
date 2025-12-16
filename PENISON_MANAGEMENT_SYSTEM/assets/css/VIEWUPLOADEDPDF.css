@@ -1,0 +1,91 @@
+﻿/* Download All Button */
+.download-all-btn {
+    background: linear-gradient(135deg, #4361ee, #3a0ca3);
+    color:red;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.download-icon {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gif-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.static-icon {
+    transition: all 0.3s ease;
+}
+
+.download-text {
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.download-all-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(67, 97, 238, 0.3);
+    background: linear-gradient(135deg, #3a56d4, #2f0a8a);
+}
+
+    .download-all-btn:hover .static-icon {
+        opacity: 0;
+    }
+
+    .download-all-btn:hover .gif-icon {
+        opacity: 1;
+    }
+
+    .download-all-btn:hover .download-text {
+        transform: translateX(3px);
+    }
+
+/* Loading state */
+.download-all-btn.loading {
+    pointer-events: none;
+}
+
+    .download-all-btn.loading .static-icon {
+        opacity: 0;
+    }
+
+    .download-all-btn.loading .gif-icon {
+        opacity: 1;
+        animation: pulse 1.5s infinite;
+    }
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}

@@ -1,0 +1,76 @@
+﻿@model List<PENISON_MANAGEMENT_SYSTEM.Models.PMSImageUpload>
+@{
+    var date = ViewBag.Date;
+    var accountType = ViewBag.AccountType;
+
+}
+
+<style>
+    .btn-icon {
+        display: inline-flex;
+        align-items: center;
+        background-color: #28a745;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-weight: bold;
+        text-decoration: none;
+        margin-bottom: 15px;
+        border: none;
+    }
+
+        .btn-icon img {
+            margin-right: 8px;
+            width: 24px;
+            height: 24px;
+        }
+
+        .btn-icon:hover {
+            background-color: #218838;
+        }
+</style>
+
+<h3 class="text-primary">📊 Daily Report Result</h3>
+
+
+<a class="btn-icon" target="_blank"
+   href="@Url.Action("DOWNLOADALLREPORT", "Report", new { date = date, accountType = accountType })">
+    @*<img src="@Url.Content("~/assets/icons/pdf.gif")" alt="PDF Icon" />*@
+    <img src="~/assets/images/pdf.gif" />
+    DOWNLOAD REPORT
+</a>
+
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Sl No.</th>
+            <th>DPCODE</th>
+            <th>Account No</th>
+            <th>PPA No</th>
+            <th>Filename</th>
+            <th>Upload Date</th>
+            <th>Uploaded By</th>
+            <th>Approved By</th>
+            <th>Account Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <tr>
+                <td>@(i + 1)</td>
+                <td>@Model[i].DPCODE</td>
+                <td>@Model[i].Accountnumber</td>
+                <td>@Model[i].PPANO</td>
+                <td>@Model[i].FILENAME</td>
+                <td>@Model[i].UPLOADEDDATE.ToString("dd-MMM-yyyy")</td>
+                <td>@Model[i].UPLOADEDBY</td>
+                <td>@Model[i].APPROVEDBY</td>
+                <td>@Model[i].ACCOUNTTYPE</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p><strong>Total Records:</strong> @Model.Count</p>

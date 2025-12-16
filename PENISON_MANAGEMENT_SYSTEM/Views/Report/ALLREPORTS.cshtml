@@ -1,0 +1,69 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .dashboard-section {
+        text-align: center;
+        margin-top: 60px;
+    }
+
+    .report-icon {
+        display: inline-block;
+        margin: 40px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        transition: transform 0.3s ease;
+    }
+
+        .report-icon:hover {
+            transform: scale(1.05);
+        }
+
+        .report-icon img {
+            width: 240px; /* Increased width */
+            height: 240px; /* Increased height */
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: box-shadow 0.3s;
+        }
+
+        .report-icon:hover img {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .report-icon span {
+            display: block;
+            margin-top: 15px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #007bff;
+        }
+</style>
+
+<div class="dashboard-section">
+    <a href="@Url.Action("DailyReport", "Report")" class="report-icon">
+        <img src="@Url.Content("~/assets/images/analysis.gif")" alt="Daily Report Icon" />
+        <span> REPORT IN PDF</span>
+    </a>
+
+    <a href="@Url.Action("INDIVIDUALREPORTINEXCEL", "Report")" class="report-icon">
+        <img src="@Url.Content("~/assets/images/Monthly.gif")" alt="Monthly Report Icon" />
+        <span> REPORT IN EXCEL</span>
+    </a>
+
+    @*<a href="@Url.Action("GenerateAllReports", "Report")" class="report-icon">
+        <img src="@Url.Content("~/assets/images/Monthly.gif")" alt="Monthly Report Icon" />
+        <span>GENERATE ALL REPORTS in PDF</span>
+    </a>
+    <a href="@Url.Action("ALLDATAINEXCEL", "Report")" class="report-icon">
+        <img src="@Url.Content("~/assets/images/Monthly.gif")" alt="Monthly Report Icon" />
+        <span>GENERATE ALL REPORTS IN EXCEL</span>
+    </a>*@
+
+    @*<a href="@Url.Action("YearlyReport", "Report")" class="report-icon">
+            <img src="@Url.Content("~/assets/images/YEARLY.gif")" alt="Yearly Report Icon" />
+            <span>YEARLY REPORT</span>
+        </a>*@
+</div>

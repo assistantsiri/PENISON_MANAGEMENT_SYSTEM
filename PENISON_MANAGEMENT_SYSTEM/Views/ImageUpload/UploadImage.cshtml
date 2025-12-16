@@ -1,0 +1,568 @@
+﻿
+@model PENISON_MANAGEMENT_SYSTEM.Models.FileUpload
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>CANBANK COMPUTER SERVICES LIMITED</title>
+    <!-- loader-->
+    @* <link href="assets/css/pace.min.css" rel="stylesheet" />
+        <link href="~/assets/css/pace.min.css" rel="stylesheet" />
+
+
+        <script src="assets/js/pace.min.js"></script>
+        <script src="~/assets/js/pace.min.js"></script> *@
+
+    <!--favicon-->
+    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+    <img src="~/assets/images/favicon.ico" type="image/x-icon" />
+
+    <!-- Vector CSS -->
+    <link href="assets/plugins/vectormap/jquery-jvectormap-2.0.2.css" rel="stylesheet" />
+
+
+    <!-- simplebar CSS-->
+    <link href="assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
+    <link href="~/assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
+
+
+    <!-- Bootstrap core CSS-->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/assets/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- animate CSS-->
+    <link href="assets/css/animate.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/animate.css" rel="stylesheet" />
+
+    <!-- Icons CSS-->
+    <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/icons.css" rel="stylesheet" type="text/css" />
+
+    <!-- Sidebar CSS-->
+    <link href="assets/css/sidebar-menu.css" rel="stylesheet" />
+    <link href="~/assets/css/sidebar-menu.css" rel="stylesheet" />
+
+    <!-- Custom Style-->
+    <link href="assets/css/app-style.css" rel="stylesheet" />
+
+    <link href="~/assets/css/app-style.css" rel="stylesheet" />
+
+    @*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">*@
+    <link href="~/assets/SweetAlert/sweetalert2.min.css" rel="stylesheet" />
+    <style>
+        .Table {
+            background-color: cornflowerblue;
+        }
+    </style>
+</head>
+
+<body class="bg-theme bg-theme1">
+
+    <!-- Start wrapper-->
+    <div id="wrapper">
+
+        <!--Start sidebar-wrapper-->
+        <div id="sidebar-wrapper" data-simplebar="" data-simplebar-auto-hide="true">
+            <div class="brand-logo">
+                <a href="index.html">
+                    @* <img src="assets/images/logo-icon.png" class="logo-icon" alt="logo icon"> *@
+                    <img src="~/assets/canarabank.jpg" class="logo-icon" alt="logo icon" />
+                    <h5 class="logo-text">CANARA BANK</h5>
+                </a>
+            </div>
+            <ul class="sidebar-menu do-nicescrol">
+                <li class="sidebar-header">MAIN NAVIGATION</li>
+                @* <li>
+                        <a href="index.html">
+                            <i class="zmdi zmdi-view-dashboard"></i> <span>Dashboard</span>
+                        </a>
+                    </li> *@
+
+                <li>
+                    <a href="@Url.Action("UploadImage", "ImageUpload")">
+                        <i class="fa fa-file" style="color:red"></i> <span>UPLOAD FILES</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("ViewAllFolders", "ImageUpload")">
+                        <i class="fa fa-cc-mastercard" style="color:orangered"></i> <span>UPLOADED FILES</span>
+                    </a>
+                </li>
+                @* <li>
+                        <a href="forms.html">
+                            <i class="zmdi zmdi-format-list-bulleted"></i> <span>Forms</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="tables.html">
+                            <i class="zmdi zmdi-grid"></i> <span>Tables</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="calendar.html">
+                            <i class="zmdi zmdi-calendar-check"></i> <span>Calendar</span>
+                            <small class="badge float-right badge-light">New</small>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="profile.html">
+                            <i class="zmdi zmdi-face"></i> <span>Profile</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="login.html" target="_blank">
+                            <i class="zmdi zmdi-lock"></i> <span>Login</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="register.html" target="_blank">
+                            <i class="zmdi zmdi-account-circle"></i> <span>Registration</span>
+                        </a>
+                    </li> *@
+                @*
+                    <li class="sidebar-header">LABELS</li>
+                    <li><a href="javaScript:void();"><i class="zmdi zmdi-coffee text-danger"></i> <span>Important</span></a></li>
+                    <li><a href="javaScript:void();"><i class="zmdi zmdi-chart-donut text-success"></i> <span>Warning</span></a></li>
+                    <li><a href="javaScript:void();"><i class="zmdi zmdi-share text-info"></i> <span>Information</span></a></li> *@
+
+            </ul>
+
+        </div>
+        <!--End sidebar-wrapper-->
+        <!--Start topbar header-->
+        <header class="topbar-nav">
+            <nav class="navbar navbar-expand fixed-top">
+                <ul class="navbar-nav mr-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link toggle-menu" href="javascript:void();">
+                            <i class="icon-menu menu-icon"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <form class="search-bar">
+                            <input type="text" class="form-control" placeholder="Enter keywords">
+                            <a href="javascript:void();"><i class="icon-magnifier"></i></a>
+                        </form>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav align-items-center right-nav-link">
+                    @*  <li class="nav-item dropdown-lg">
+                            <a class="nav-link dropdown-toggle dropdown-toggle-nocaret waves-effect" data-toggle="dropdown" href="javascript:void();">
+                                <i class="fa fa-envelope-open-o"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown-lg">
+                            <a class="nav-link dropdown-toggle dropdown-toggle-nocaret waves-effect" data-toggle="dropdown" href="javascript:void();">
+                                <i class="fa fa-bell-o"></i>
+                            </a>
+                        </li> *@
+                    @* <li class="nav-item language">
+                            <a class="nav-link dropdown-toggle dropdown-toggle-nocaret waves-effect" data-toggle="dropdown" href="javascript:void();"><i class="fa fa-flag"></i></a>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li class="dropdown-item"> <i class="flag-icon flag-icon-gb mr-2"></i> English</li>
+                                <li class="dropdown-item"> <i class="flag-icon flag-icon-fr mr-2"></i> French</li>
+                                <li class="dropdown-item"> <i class="flag-icon flag-icon-cn mr-2"></i> Chinese</li>
+                                <li class="dropdown-item"> <i class="flag-icon flag-icon-de mr-2"></i> German</li>
+                            </ul>
+                        </li> *@
+                    <li class="nav-item">
+                        <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" data-toggle="dropdown" href="#">
+                            <span class="user-profile"><img src="~/assets/images/canarabank.jpg" class="img-circle" alt="ADMIN"></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li class="dropdown-item user-details">
+                                <a href="javaScript:void();">
+                                    <div class="media">
+                                        <div class="avatar"><img class="align-self-start mr-3" src="https://via.placeholder.com/110x110" alt="ADMIN"></div>
+                                        <div class="media-body">
+                                            <h6 class="mt-2 user-title">CCSL</h6>
+                                            <p class="user-subtitle">CCSL.CO.IN</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="dropdown-divider"></li>
+                            <li class="dropdown-item"><i class="icon-envelope mr-2"></i> Inbox</li>
+                            <li class="dropdown-divider"></li>
+                            <li class="dropdown-item"><i class="icon-wallet mr-2"></i> Account</li>
+                            <li class="dropdown-divider"></li>
+                            <li class="dropdown-item"><i class="icon-settings mr-2"></i> Setting</li>
+                            <li class="dropdown-divider"></li>
+                            <li class="dropdown-item"><i class="icon-power mr-2"></i> Logout</li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+        <!--End topbar header-->
+
+        <div class="clearfix"></div>
+
+        <div class="content-wrapper">
+            <div>
+
+                <!--Start Dashboard Content-->
+                @*  <div class="card mt-3">
+                        <div class="card-content" style="width:100%">
+                            <div class="row row-group m-0">
+                                <div class="col-12 col-lg-6 col-xl-3 border-light">
+                                    <div class="card-body">
+                                        <h5 class="text-white mb-0">9526 <span class="float-right"><i class="fa fa-shopping-cart"></i></span></h5>
+                                        <div class="progress my-3" style="height:3px;">
+                                            <div class="progress-bar" style="width:65%"></div>
+                                        </div>
+                                        <p class="mb-0 text-white small-font">Total Upload  <span class="float-right">+4.2% <i class="zmdi zmdi-long-arrow-up"></i></span></p>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-6 col-xl-3 border-light">
+                                    <div class="card-body">
+                                        <h5 class="text-white mb-0">8323 <span class="float-right"><i class="fa fa-usd"></i></span></h5>
+                                        <div class="progress my-3" style="height:3px;">
+                                            <div class="progress-bar" style="width:65%"></div>
+                                        </div>
+                                        <p class="mb-0 text-white small-font">Total View <span class="float-right">+1.2% <i class="zmdi zmdi-long-arrow-up"></i></span></p>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-6 col-xl-3 border-light">
+                                    <div class="card-body">
+                                        <h5 class="text-white mb-0">6200 <span class="float-right"><i class="fa fa-eye"></i></span></h5>
+                                        <div class="progress my-3" style="height:3px;">
+                                            <div class="progress-bar" style="width:65%"></div>
+                                        </div>
+                                        <p class="mb-0 text-white small-font">Visitors <span class="float-right">+5.2% <i class="zmdi zmdi-long-arrow-up"></i></span></p>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-6 col-xl-3 border-light">
+                                    <div class="card-body">
+                                        <h5 class="text-white mb-0">5630 <span class="float-right"><i class="fa fa-envira"></i></span></h5>
+                                        <div class="progress my-3" style="height:3px;">
+                                            <div class="progress-bar" style="width:65%"></div>
+                                        </div>
+                                        <p class="mb-0 text-white small-font">Total Download <span class="float-right">+2.2% <i class="zmdi zmdi-long-arrow-up"></i></span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> *@
+
+                @{
+                    ViewData["Title"] = "Upload Images";
+                }
+
+                <h2 class="text-center text-warning">Upload Images</h2>
+
+                <div class="mt-4 p-4 border border-primary rounded shadow">
+                    @if (TempData["Message"] != null)
+                    {
+                        <div class="alert alert-success text-center">@TempData["Message"]</div>
+                    }
+
+                    <form method="post" enctype="multipart/form-data" asp-action="UploadImage">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Upload Folder:</label>
+                            <input type="file" name="files" class="form-control" webkitdirectory directory multiple required />
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-outline-primary px-4 rounded-pill" value="UploadImg">Upload Folder</button>
+                            <button type="submit" name="action" value="UploadImg2" class="btn btn-outline-danger px-4 rounded-pill" formnovalidate>Upload Img</button>
+
+                        </div>
+
+                    </form>
+
+
+                </div>
+                <div class="container mt-4 p-4 border border-success rounded shadow">
+                    <form method="post" enctype="multipart/form-data" asp-action="UploadFolder">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Account Type:</label>
+                            <select asp-for="AccountType" class="form-control" required>
+                                <option value="">-- Select Type --</option>
+                                <option value="R">Railways</option>
+                                <option value="S">State</option>
+                                <option value="T">Telecom</option>
+                                <option value="C">Civil</option>
+                                <option value="P">Postal</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Bank:</label><br />
+                            <input type="radio" name="BankName" value="Canara" required /> Canara
+                            <input type="radio" name="BankName" value="Syndicate" required /> Syndicate
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Upload Folder:</label>
+                            <input type="file" name="files" class="form-control" webkitdirectory directory multiple required />
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success px-4">Upload Folder</button>
+                        </div>
+                        @if (Model != null && !string.IsNullOrEmpty(Model.BankName) && !string.IsNullOrEmpty(Model.AccountType))
+                        {
+                            <div class="alert alert-success mt-3">
+                                <strong>Selected Bank:</strong> @Model.BankName <br />
+                                <strong>Account Type:</strong> @Model.AccountType
+                            </div>
+                        }
+                    </form>
+
+                </div>
+                <hr />
+
+                @*  <!-- 🔍 Search Box -->
+                    <div class="mb-3">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search by Account Number..." onkeyup="searchTable()">
+                    </div>
+
+                    <h3 class="text-success mt-4">Uploaded Files</h3>
+
+                    <table class="table table-bordered">
+                        <thead class="table-success">
+                            <tr>
+                                <th>S.No</th>
+                                <th>Folder Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            @if (ViewBag.UploadedFiles != null)
+                            {
+                                int counter = 1;
+                                foreach (var file in ViewBag.UploadedFiles)
+                                {
+                                    <tr>
+                                        <td>@counter</td>
+                                        <td>@file.FolderName</td>
+                                        <td>
+                                            <a href="@Url.Action("ViewFolder", "ImageUpload", new { folderName = file.FolderName })" class="btn btn-info btn-sm">View Folder</a>
+                                        </td>
+                                    </tr>
+                                    counter++;
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted">No files uploaded yet.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                *@
+
+
+
+
+                <!-- Pagination Controls -->
+                @*  <div class="d-flex justify-content-between mt-3">
+                        <button class="btn btn-info" onclick="prevPage()" id="prevBtn">« Prev</button>
+                        <span id="pageNumber" class="align-self-center"></span>
+                        <button class="btn btn-warning" onclick="nextPage()" id="nextBtn">Next »</button>
+                    </div> *@
+
+                <script>
+                    // function addFileInput() {
+                    //     var div = document.createElement("div");
+                    //     div.innerHTML = '<input type="file" name="files" class="form-control mb-2" accept=".jpg,.jpeg,.png" required />';
+                    //     document.getElementById("fileInputs").appendChild(div);
+                    // }
+
+                    // 🔍 Search Functionality
+                    function searchTable() {
+                        var input, filter, table, tr, td, i, txtValue;
+                        input = document.getElementById("searchInput");
+                        filter = input.value.toUpperCase();
+                        table = document.getElementById("tableBody");
+                        tr = table.getElementsByTagName("tr");
+
+                        for (i = 0; i < tr.length; i++) {
+                            td = tr[i].getElementsByTagName("td")[2];
+                            if (td) {
+                                txtValue = td.textContent || td.innerText;
+                                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                    tr[i].style.display = "";
+                                } else {
+                                    tr[i].style.display = "none";
+                                }
+                            }
+                        }
+                    }
+
+                    // 📄 Pagination Functionality
+                    var currentPage = 1;
+                    var rowsPerPage = 10;
+
+                    function showPage(page) {
+                        var table = document.getElementById("tableBody");
+                        var tr = table.getElementsByTagName("tr");
+                        var totalPages = Math.ceil(tr.length / rowsPerPage);
+
+                        if (page < 1) page = 1;
+                        if (page > totalPages) page = totalPages;
+
+                        for (var i = 0; i < tr.length; i++) {
+                            tr[i].style.display = "none";
+                        }
+
+                        for (var i = (page - 1) * rowsPerPage; i < page * rowsPerPage && i < tr.length; i++) {
+                            tr[i].style.display = "";
+                        }
+
+                        document.getElementById("pageNumber").innerText = "Page " + page + " of " + totalPages;
+                        document.getElementById("prevBtn").disabled = page == 1;
+                        document.getElementById("nextBtn").disabled = page == totalPages;
+                    }
+
+                    function nextPage() {
+                        currentPage++;
+                        showPage(currentPage);
+                    }
+
+                    function prevPage() {
+                        currentPage--;
+                        showPage(currentPage);
+                    }
+
+
+                    document.addEventListener("DOMContentLoaded", function () {
+                        showPage(1);
+                    });
+                </script>
+
+
+
+
+
+            </div>
+            <!-- End container-fluid-->
+
+        </div><!--End content-wrapper-->
+        <!--Start Back To Top Button-->
+        <a href="javaScript:void();" class="back-to-top"><i class="fa fa-angle-double-up"></i> </a>
+        <!--End Back To Top Button-->
+        <!--Start footer-->
+        <footer class="footer">
+            <div class="container">
+                <div class="text-center">
+                    Copyright © 2025 Canbank Computer Services Limited
+                </div>
+            </div>
+        </footer>
+        <!--End footer-->
+        <!--start color switcher-->
+        <div class="right-sidebar">
+            <div class="switcher-icon">
+                <i class="zmdi zmdi-settings zmdi-hc-spin"></i>
+            </div>
+            <div class="right-sidebar-content">
+
+                <p class="mb-0">Gaussion Texture</p>
+                <hr>
+
+                <ul class="switcher">
+                    <li id="theme1"></li>
+                    <li id="theme2"></li>
+                    <li id="theme3"></li>
+                    <li id="theme4"></li>
+                    <li id="theme5"></li>
+                    <li id="theme6"></li>
+                </ul>
+
+                <p class="mb-0">Gradient Background</p>
+                <hr>
+
+                <ul class="switcher">
+                    <li id="theme7"></li>
+                    <li id="theme8"></li>
+                    <li id="theme9"></li>
+                    <li id="theme10"></li>
+                    <li id="theme11"></li>
+                    <li id="theme12"></li>
+                    <li id="theme13"></li>
+                    <li id="theme14"></li>
+                    <li id="theme15"></li>
+                </ul>
+
+            </div>
+        </div>
+        <!--end color switcher-->
+
+    </div><!--End wrapper-->
+    <!-- Bootstrap core JavaScript-->
+    <script src="assets/js/jquery.min.js"></script>
+
+    <script src="~/assets/js/jquery.min.js"></script>
+
+    <script src="assets/js/popper.min.js"></script>
+    <script src="~/assets/js/popper.min.js"></script>
+
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/bootstrap.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+
+    <!-- simplebar js -->
+    <script src="assets/plugins/simplebar/js/simplebar.js"></script>
+    <script src="~/assets/plugins/simplebar/js/simplebar.js"></script>
+
+    <!-- sidebar-menu js -->
+    <script src="assets/js/sidebar-menu.js"></script>
+    <script src="~/assets/js/sidebar-menu.js"></script>
+
+
+    <!-- loader scripts -->
+    <script src="assets/js/jquery.loading-indicator.js"></script>
+
+
+    <!-- Custom scripts -->
+    <script src="assets/js/app-script.js"></script>
+    <script src="~/assets/js/app-script.js"></script>
+    <!-- Chart js -->
+    @* <script src="assets/plugins/Chart.js/Chart.min.js"></script>
+        <script src="~/assets/plugins/chart.js/chart.min.js"></script> *@
+    <!-- Index js -->
+    @* <script src="assets/js/index.js"></script>
+
+        <script src="~/assets/js/index.js"></script> *@
+
+
+
+    <!-- SweetAlert JS -->
+    @*<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>*@
+    <script src="~/assets/SweetAlert/sweetalert2.all.min.js"></script>
+    <script>
+    // Check if session is null and show alert
+    document.addEventListener('DOMContentLoaded', function() {
+        @if (Session["USERNAME"] == null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'error',
+                title: 'Access Denied',
+                text: 'Please login to access this page',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '@Url.Action("Login", "User")';
+                }
+            });
+            </text>
+        }
+    });
+    </script>
+</body>
+</html>

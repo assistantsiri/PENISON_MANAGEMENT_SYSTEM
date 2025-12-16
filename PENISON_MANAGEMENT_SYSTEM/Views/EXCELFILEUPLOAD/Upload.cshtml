@@ -1,0 +1,267 @@
+﻿@model List<PENISON_MANAGEMENT_SYSTEM.Models.EXCELFILEUPLOADMODEL>
+
+@{
+    ViewBag.Title = "Excel Data Upload";
+    var modelList = Model ?? new List<PENISON_MANAGEMENT_SYSTEM.Models.EXCELFILEUPLOADMODEL>();
+
+    int pageSize = 10;
+    int totalPages = (int)Math.Ceiling((double)modelList.Count / pageSize);
+    int currentPage = 1;
+
+    if (Request.QueryString["page"] != null)
+    {
+        currentPage = Convert.ToInt32(Request.QueryString["page"]);
+    }
+
+    var pagedData = modelList.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0"><i class="fas fa-file-excel me-2"></i>Excel Data Upload</h2>
+        </div>
+
+        <div class="card-body">
+            @using (Html.BeginForm("Upload", "EXCELFILEUPLOAD", FormMethod.Post, new { enctype = "multipart/form-data", @class = "dropzone", id = "excelUploadForm" }))
+            {
+                <div class="text-center border-2 border-dashed rounded p-4 mb-3" id="dropZone">
+                    <i class="fas fa-file-excel fa-4x text-primary mb-3"></i>
+                    <h5>Drag & Drop your Excel file here</h5>
+                    <p class="text-muted">or</p>
+                    <div class="form-group">
+                        <div class="custom-file">
+
+                            <input type="file" name="excelFile" class="custom-file-input" id="excelFileInput" required accept=".xlsx" />
+                            @*<label class="custom-file-label btn btn-outline-primary" for="excelFileInput">
+                                    <i class="fas fa-folder-open me-2"></i>Choose File
+                                </label>*@
+                        </div>
+                    </div>
+                    <small class="form-text text-muted">Only .xlsx files are allowed</small>
+                    <div id="fileNameDisplay" class="mt-2 font-weight-bold text-success"></div>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-lg btn-block mt-3" id="uploadBtn">
+                    <i class="fas fa-upload me-2"></i>Upload Data
+                </button>
+            }
+
+            @if (TempData["Message"] != null)
+            {
+                var message = TempData["Message"].ToString();
+                var isError = message.Contains("❌");
+                <div class="alert @(isError ? "alert-danger" : "alert-success") alert-dismissible fade show mt-3">
+                    @if (isError)
+                    {
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                    }
+                    else
+                    {
+                        <i class="fas fa-check-circle me-2"></i>
+                    }
+                    @message
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <div class="card shadow mt-4">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="fas fa-table me-2"></i>Uploaded Data Preview</h4>
+                <div class="d-flex">
+                    <div class="input-group" style="width: 300px;">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" id="globalSearch" class="form-control" placeholder="Search all columns...">
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover" id="dataTable">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th><i class="fas fa-hashtag me-1"></i>Account No</th>
+                                <th><i class="fas fa-id-card me-1"></i>PPO No</th>
+                                <th><i class="fas fa-user me-1"></i>Name</th>
+                                <th><i class="fas fa-code me-1"></i>DP Code</th>
+                                <th><i class="fas fa-tag me-1"></i>Type</th>
+                                <th><i class="fas fa-user-plus me-1"></i>Created By</th>
+                                <th><i class="fas fa-calendar-alt me-1"></i>Created Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in pagedData)
+                            {
+                                <tr>
+                                    <td>@item.PPA_ACNO</td>
+                                    <td>@item.PPA_PPONO</td>
+                                    <td>@item.ppA_name</td>
+                                    <td>@item.PPA_DPCD</td>
+                                    <td><span class="badge bg-secondary">@item.PPA_Type</span></td>
+                                    <td>@item.PPA_CREATED_BY</td>
+                                    <td>@item.PPA_CREATED_DATE.ToString("dd-MMM-yyyy HH:mm")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Controls -->
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>
+                        <span class="badge bg-primary">Total Records: @Model.Count</span>
+                        <span class="badge bg-secondary ms-2">Page @currentPage of @totalPages</span>
+                        <span class="badge bg-info ms-2">Showing @((currentPage - 1) * pageSize + 1) to @Math.Min(currentPage * pageSize, Model.Count) entries</span>
+                    </div>
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                                <a class="page-link" href="?page=@(currentPage - 1)" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo; Previous</span>
+                                </a>
+                            </li>
+
+                            @for (int i = 1; i <= totalPages; i++)
+                            {
+                                <li class="page-item @(i == currentPage ? "active" : "")">
+                                    <a class="page-link" href="?page=@i">@i</a>
+                                </li>
+                            }
+
+                            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                                <a class="page-link" href="?page=@(currentPage + 1)" aria-label="Next">
+                                    <span aria-hidden="true">Next &raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@*<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">*@
+<link href="~/assets/Bootstrap/dataTables.bootstrap5.min.css" rel="stylesheet" />
+@*<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>*@
+<script src="~/assets/JQUERY/jquery.dataTables.min.js"></script>
+@*<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>*@
+<script src="~/assets/Bootstrap/dataTables.bootstrap5.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Display selected file name
+        $('#excelFileInput').change(function (e) {
+            var fileName = e.target.files[0].name;
+            $('#fileNameDisplay').html('<i class="fas fa-file me-2"></i>' + fileName);
+            $('#dropZone').addClass('border-success').removeClass('border-primary');
+        });
+
+        // Drag and drop highlight
+        $('#dropZone').on('dragover', function () {
+            $(this).addClass('border-warning bg-light');
+        }).on('dragleave drop', function () {
+            $(this).removeClass('border-warning bg-light');
+        });
+
+        // Form submission feedback
+        $('#excelUploadForm').submit(function () {
+            $('#uploadBtn').html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Uploading...').prop('disabled', true);
+        });
+
+        // Initialize DataTable with enhanced features
+        if ($('#dataTable').length) {
+            var table = $('#dataTable').DataTable({
+                paging: false, // Disable DataTables pagination since we're using server-side
+                searching: false, // Disable DataTables search since we have our own
+                info: false, // Disable DataTables info since we have our own
+                ordering: true,
+                responsive: true,
+                dom: 't'
+            });
+
+            // Global search functionality
+            $('#globalSearch').keyup(function () {
+                table.search($(this).val()).draw();
+            });
+        }
+    });
+</script>
+
+<style>
+    #dropZone {
+        border: 2px dashed #0d6efd;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+        #dropZone:hover {
+            background-color: #f8f9fa;
+        }
+
+    .custom-file-label::after {
+        content: "Browse";
+        background-color: bisque;
+    }
+
+    .table th {
+        white-space: nowrap;
+        position: relative;
+    }
+
+    .badge {
+        font-size: 0.9em;
+        padding: 0.5em 0.75em;
+    }
+
+    /* Pagination styling */
+    .pagination .page-item.active .page-link {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+    .pagination .page-link {
+        color: #0d6efd;
+    }
+
+    /* Search box styling */
+    #globalSearch {
+        transition: all 0.3s;
+    }
+
+        #globalSearch:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+    /* Table row hover effect */
+    #dataTable tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.05);
+        cursor: pointer;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .card-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        #globalSearch {
+            width: 100% !important;
+            margin-top: 10px;
+        }
+
+        .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    }
+    #excelFileInput {
+        background: linear-gradient(135deg, #d4af37 0%, #ffffff 100%);
+    }
+</style>

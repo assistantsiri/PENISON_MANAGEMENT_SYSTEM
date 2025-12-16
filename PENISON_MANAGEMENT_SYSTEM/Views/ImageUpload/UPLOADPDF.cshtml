@@ -1,0 +1,711 @@
+﻿@model PENISON_MANAGEMENT_SYSTEM.Models.Imageupload
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    @*<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />*@
+    <link href="~/assets/Bootstrap/bootstrap.min.css" rel="stylesheet" />
+    @*<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />*@
+    <link href="~/assets/Awesome/fontawesome-free-6.1.1-web/css/all.css" rel="stylesheet" />
+    <link href="~/assets/Awesome/fontawesome-free-6.1.1-web/css/all.min.css" rel="stylesheet" />
+
+    @*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">*@
+    <link href="~/assets/SweetAlert/sweetalert2.min.css" rel="stylesheet" />
+    @*<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />*@
+    @*<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>*@
+    <script src="~/assets/SweetAlert/sweetalert2.all.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4bb543;
+            --warning: #ffdd00;
+            --danger: #dc3545;
+            --gray: #6c757d;
+            --light-blue: #e8f4fc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /*body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+            overflow-x: hidden;
+        }*/
+
+        .container-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+            border-bottom: none;
+        }
+
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .card-title i {
+                margin-right: 15px;
+                font-size: 32px;
+            }
+
+        .card-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-top: 8px;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        .form-container {
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 16px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+
+            .form-label i {
+                margin-right: 10px;
+                color: var(--primary);
+            }
+
+        .custom-dropdown .form-select {
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-size: 16px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            background-color: var(--light);
+        }
+
+            .custom-dropdown .form-select:focus {
+                border-color: var(--accent);
+                box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
+            }
+
+        .folder-upload {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .folder-display {
+            border: 3px dashed #90caf9;
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background-color: var(--light-blue);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .folder-display:hover, .folder-display.dragover {
+                border-color: var(--primary);
+                background-color: rgba(67, 97, 238, 0.05);
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            }
+
+        .folder-icon {
+            font-size: 64px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .folder-display:hover .folder-icon {
+            transform: scale(1.1);
+            color: var(--secondary);
+        }
+
+        .folder-text {
+            font-size: 20px;
+            color: var(--dark);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .folder-hint {
+            font-size: 15px;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+
+        .folder-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .pdf-count {
+            font-size: 16px;
+            color: var(--success);
+            font-weight: 600;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .pdf-count i {
+                margin-right: 8px;
+            }
+
+        .file-list-container {
+            margin-top: 25px;
+            max-height: 300px;
+            overflow-y: auto;
+            border-radius: 12px;
+            background-color: #f8f9fa;
+            border: 1px dashed #adb5bd;
+            padding: 20px;
+            display: none;
+        }
+
+        .file-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .file-list-title {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 17px;
+        }
+
+        .file-list-count {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+            .file-item:hover {
+                transform: translateX(5px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+
+        .file-name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-right: 15px;
+            color: var(--dark);
+            font-size: 15px;
+        }
+
+        .file-size {
+            color: var(--gray);
+            font-size: 13px;
+            min-width: 70px;
+            text-align: right;
+        }
+
+        .btn-upload {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px 35px;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+            width: 100%;
+            margin-top: 10px;
+        }
+
+            .btn-upload:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
+                background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            }
+
+            .btn-upload:disabled {
+                background: #cccccc;
+                box-shadow: none;
+                transform: none;
+                cursor: not-allowed;
+            }
+
+            .btn-upload i {
+                margin-right: 10px;
+            }
+
+        .upload-progress {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .progress-bar {
+            height: 10px;
+            border-radius: 5px;
+            background-color: #e9ecef;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--primary) 100%);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .cloud {
+            position: fixed;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+            .cloud.x1 {
+                top: 10%;
+                left: 10%;
+                animation: movecloud 35s linear infinite;
+            }
+
+            .cloud.x2 {
+                top: 20%;
+                left: 70%;
+                animation: movecloud 30s linear infinite;
+            }
+
+            .cloud.x3 {
+                top: 40%;
+                left: 40%;
+                animation: movecloud 25s linear infinite;
+            }
+
+            .cloud.x4 {
+                top: 60%;
+                left: 80%;
+                animation: movecloud 20s linear infinite;
+            }
+
+            .cloud.x5 {
+                top: 80%;
+                left: 20%;
+                animation: movecloud 15s linear infinite;
+            }
+
+        @@keyframes movecloud {
+            0% {
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(50px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .container-wrapper {
+                padding: 15px 10px;
+            }
+
+            .card-header {
+                padding: 20px 15px;
+            }
+
+            .card-title {
+                font-size: 22px;
+            }
+
+            .card-body {
+                padding: 20px 15px;
+            }
+
+            .folder-display {
+                padding: 30px 15px;
+            }
+
+            .folder-icon {
+                font-size: 48px;
+            }
+
+            .folder-text {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cloud x1"><i class="fas fa-cloud" style="font-size: 80px; color: #b2d4f5;"></i></div>
+    <div class="cloud x2"><i class="fas fa-cloud" style="font-size: 100px; color: #c2dbf7;"></i></div>
+    <div class="cloud x3"><i class="fas fa-cloud" style="font-size: 60px; color: #b2d4f5;"></i></div>
+    <div class="cloud x4"><i class="fas fa-cloud" style="font-size: 120px; color: #c2dbf7;"></i></div>
+    <div class="cloud x5"><i class="fas fa-cloud" style="font-size: 70px; color: #b2d4f5;"></i></div>
+
+    <div class="container-wrapper">
+        <div class="card">
+            <div class="card-header">
+                <h1 class="card-title"><i class="fas fa-folder-open"></i>  PDF IMAGE UPLOAD</h1>
+                <p class="card-subtitle">Select a folder containing all PDF documents for processing</p>
+            </div>
+
+            <div class="card-body">
+                <form asp-action="UPLOADPDF" method="post" enctype="multipart/form-data" id="uploadForm">
+                    <!-- Account Type Selection -->
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-user-tag"></i> Account Type</label>
+                        <div class="custom-dropdown">
+                            @Html.DropDownListFor(model => model.AccountType, ViewBag.AccountTypeList as SelectList,
+                                new { @class = "form-select text-center", required = "required" })
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-folder"></i> PDF Folder Selection</label>
+                        <div class="folder-upload">
+                            <div class="folder-display" id="folderDisplay">
+                                <div class="folder-icon">
+                                    <i class="fas fa-folder-plus"></i>
+                                </div>
+                                <div class="folder-text">Drag & Drop PDF Folder Here</div>
+                                <div class="folder-hint">or click to browse your files</div>
+                                <div id="pdfCount" class="pdf-count" style="display: none;">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span id="countText">0 PDF files selected</span>
+                                </div>
+                                <input type="file" id="folderInput" name="pdfFiles" webkitdirectory directory multiple class="folder-input" accept=".pdf" />
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div id="fileListContainer" class="file-list-container">
+                        <div class="file-list-header">
+                            <div class="file-list-title">Selected Files</div>
+                            <div class="file-list-count" id="fileListCount">0 files</div>
+                        </div>
+                        <div id="fileList"></div>
+                    </div>
+
+
+                    <!--<div id="uploadProgress" class="upload-progress">-->
+                        @*<div class="progress-text">
+                            <span id="progressStatus">Processing...</span>
+                            <span id="progressPercent">0%</span>
+                        </div>*@
+                        <!--<div class="progress-bar">
+                            <div class="progress-bar-fill" id="progressBar"></div>
+                        </div>
+                    </div>-->
+
+
+                    <button type="submit" class="btn-upload" id="uploadButton" disabled>
+                        <i class="fas fa-cloud-upload-alt"></i> Upload PDF Files
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    @*<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>*@
+    <script src="~/assets/JQUERY/jquery-3.6.0/dist/jquery.min.js"></script>
+
+
+    @*<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>*@
+    <script src="~/assets/SweetAlert/sweetalert2.all.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+
+            $('#folderInput').change(function (e) {
+                handleFolderSelection(e.target.files);
+            });
+
+
+            const folderDisplay = document.getElementById('folderDisplay');
+
+            folderDisplay.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.classList.add('dragover');
+            });
+
+            folderDisplay.addEventListener('dragleave', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.classList.remove('dragover');
+            });
+
+            folderDisplay.addEventListener('drop', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.classList.remove('dragover');
+
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+
+                    $('#folderInput')[0].files = files;
+                    handleFolderSelection(files);
+                }
+            });
+
+
+            folderDisplay.addEventListener('click', function (e) {
+                if (e.target !== $('#folderInput')[0]) {
+                    $('#folderInput').trigger('click');
+                }
+            });
+
+
+            function handleFolderSelection(files) {
+                const fileList = $('#fileList');
+                const fileListContainer = $('#fileListContainer');
+                const pdfCount = $('#pdfCount');
+                const countText = $('#countText');
+                const fileListCount = $('#fileListCount');
+
+                fileList.empty();
+
+                if (files.length > 0) {
+
+                    const pdfFiles = Array.from(files).filter(file => file.name.toLowerCase().endsWith('.pdf'));
+
+                    if (pdfFiles.length === 0) {
+                        Swal.fire({
+                            title: 'No PDFs Found',
+                            text: 'The selected folder does not contain any PDF files',
+                            icon: 'warning',
+                            confirmButtonColor: '#3085d6'
+                        });
+                        return;
+                    }
+
+
+                    countText.text(`${pdfFiles.length} PDF file(s) selected`);
+                    pdfCount.show();
+                    fileListCount.text(`${pdfFiles.length} files`);
+
+
+                    fileListContainer.show();
+
+
+                    pdfFiles.forEach(file => {
+                        const fileItem = $('<div class="file-item"></div>');
+                        const fileName = $('<div class="file-name"></div>').text(file.name);
+                        const fileSize = $('<div class="file-size"></div>').text(formatFileSize(file.size));
+
+                        fileItem.append(fileName);
+                        fileItem.append(fileSize);
+                        fileList.append(fileItem);
+                    });
+
+
+                    $('#uploadButton').prop('disabled', false);
+                } else {
+                    pdfCount.hide();
+                    fileListContainer.hide();
+                    $('#uploadButton').prop('disabled', true);
+                }
+            }
+
+            $('#uploadForm').submit(function (e) {
+                e.preventDefault();
+
+                const fileInput = $('#folderInput')[0];
+                const accountType = $('#AccountType').val();
+
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    Swal.fire({
+                        title: 'No Folder Selected',
+                        text: 'Please select a folder containing PDF files',
+                        icon: 'warning',
+                        confirmButtonColor: '#3085d6'
+                    });
+                    return false;
+                }
+
+
+                const pdfFiles = Array.from(fileInput.files).filter(file =>
+                    file.name.toLowerCase().endsWith('.pdf')
+                );
+
+                if (pdfFiles.length === 0) {
+                    Swal.fire({
+                        title: 'No PDFs Found',
+                        text: 'The selected folder does not contain any PDF files',
+                        icon: 'error',
+                        confirmButtonColor: '#3085d6'
+                    });
+                    return false;
+                }
+
+                if (!accountType) {
+                    Swal.fire({
+                        title: 'Account Type Required',
+                        text: 'Please select an account type',
+                        icon: 'warning',
+                        confirmButtonColor: '#3085d6'
+                    });
+                    return false;
+                }
+
+
+
+                $('#uploadProgress').show();
+                $('#uploadButton').prop('disabled', true);
+
+
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 10;
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(interval);
+
+
+                        setTimeout(() => {
+                            $('#uploadForm').off('submit').submit();
+                        }, 500);
+                    }
+
+                    $('#progressBar').css('width', progress + '%');
+                    $('#progressPercent').text(Math.round(progress) + '%');
+                }, 200);
+
+
+
+                return false;
+            });
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+        });
+    </script>
+</body>
+</html>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var alertType = '@TempData["AlertType"]';
+            var alertMessage = '@TempData["AlertMessage"]';
+            var alertDetails = '@TempData["AlertDetails"]';
+
+            if (alertType && alertMessage) {
+                Swal.fire({
+                    icon: alertType,
+                    title: alertMessage,
+                    html: alertDetails ? alertDetails : '',
+                    confirmButtonColor: '#3085d6'
+                });
+            }
+        });
+    </script>
+   
+        @*<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>*@
+        <script src="~/assets/SweetAlert/sweetalert2.all.min.js"></script>
+        <script>
+            @if (Request.QueryString["message"] != null)
+            {
+                <text>
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Access Denied',
+                        text: '@Request.QueryString["message"]',
+                        confirmButtonText: 'OK'
+                    });
+                </text>
+            }
+        </script>
+ 
+
+}
+
+
+
+

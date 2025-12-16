@@ -1,0 +1,383 @@
+﻿@model List<PENISON_MANAGEMENT_SYSTEM.Models.Imageupload>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var folderList = ViewBag.AllFolderList as List<PENISON_MANAGEMENT_SYSTEM.Models.Imageupload>;
+}
+
+@*<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>*@
+@*<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />*@
+@*<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>*@
+@*<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />*@
+@*<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>*@
+
+<script src="~/assets/JQUERY/jquery-3.6.0/dist/jquery.min.js"></script>
+<link href="~/assets/Bootstrap/bootstrap.min.css" rel="stylesheet" />
+<script src="~/assets/Bootstrap/bootstrap.bundle.min.js"></script>
+<link href="~/assets/JQUERY/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="~/assets/JQUERY/jquery.dataTables.min.js"></script>
+
+
+<style>
+    .animated-button {
+        background-image: url('/images/student.jpeg');
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .animated-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .animated-button .card-body {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 16px;
+        }
+
+    .additional-btn {
+        background-color: #ffc107;
+        color: #000;
+        font-weight: 600;
+        border: none;
+        padding: 0.5rem 1.2rem;
+        margin-top: 1rem;
+        border-radius: 2rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+
+        .additional-btn:hover {
+            background-color: #e0a800;
+            transform: scale(1.05);
+        }
+</style>
+<div class="container-fluid mt-1">
+    <div class="row g-4">
+
+        <!-- Card 1: CIVIL -->
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <form method="post" asp-action="UPLOADIMAGESOFCIVIL">
+                <input type="hidden" name="accountType" value="R" />
+                <button type="submit" class="card shadow-sm border-0 rounded-4 bg-primary text-white w-100" style="height: 220px;">
+                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <h5 class="card-title">
+                            <i class="fa-solid fa-building-columns me-2" style="color:gold;"></i><b>CIVIL</b>
+                        </h5>
+                        <p class="display-6 fw-bold">@ViewBag.CivilUploadCount</p>
+                        <p class="mb-0">Uploaded in @ViewBag.CurrentMonthName</p>
+                    </div>
+                </button>
+            </form>
+        </div>
+
+        <!-- Card 2: RAILWAYS -->
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <button type="button" onclick="loadRailwaysData()" class="card shadow border-0 rounded-4 bg-success text-white w-100" style="height: 220px;">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <h5 class="card-title">
+                        <i class="fa-solid fa-train me-2" style="color:gold;"></i><b>RAILWAYS</b>
+                    </h5>
+                    <p class="display-6 fw-bold">@ViewBag.RailwaysUploadCount</p>
+                    <p class="mb-0">Uploaded in @ViewBag.CurrentMonthName</p>
+                </div>
+            </button>
+        </div>
+
+        <!-- Card 3: TELECOM -->
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <form method="post" asp-action="UPLOADIMAGESOFTELECOM">
+                <input type="hidden" name="accountType" value="R" />
+                <button type="submit" class="card shadow-sm border-0 rounded-4 bg-warning text-white w-100" style="height: 220px;">
+                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <h5 class="card-title">
+                            <i class="fa-solid fa-tower-cell me-2" style="color:darkblue;"></i><b>TELECOM</b>
+                        </h5>
+                        <p class="display-6 fw-bold">@ViewBag.TelecomUploadCount</p>
+                        <p class="mb-0">Uploaded in @ViewBag.CurrentMonthName</p>
+                    </div>
+                </button>
+            </form>
+        </div>
+
+        <!-- Card 4: POSTAL -->
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <form method="post" asp-action="USERUPLOADPOSTAL">
+                <input type="hidden" name="accountType" value="R" />
+                <button type="submit" class="card shadow-sm border-0 rounded-4 bg-danger text-white w-100" style="height: 220px;">
+                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <h5 class="card-title">
+                            <i class="fa-solid fa-envelope me-2" style="color:lightyellow;"></i><b>POSTAL</b>
+                        </h5>
+                        <p class="display-6 fw-bold">@ViewBag.PostalUploadCount</p>
+                        <p class="mb-0">Uploaded in @ViewBag.CurrentMonthName</p>
+                    </div>
+                </button>
+            </form>
+        </div>
+
+        <!-- Card 5: STATE -->
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <form method="post" asp-action="UPLOADIMAGESOFSTATE">
+                <input type="hidden" name="accountType" value="R" />
+                <button type="submit" class="card shadow-sm border-0 rounded-4 bg-info text-white w-100" style="height: 220px;">
+                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <h5 class="card-title">
+                            <i class="fa-solid fa-landmark me-2" style="color:white;"></i><b>STATE</b>
+                        </h5>
+                        <p class="display-6 fw-bold">@ViewBag.StateUploadCount</p>
+                        <p class="mb-0">Uploaded in @ViewBag.CurrentMonthName</p>
+                    </div>
+                </button>
+            </form>
+        </div>
+
+
+    </div>
+</div>
+
+@*========================~~START~~=======~IMPLEMENTED~BY~PRAMOD~MISHRA~26062025~===============UPLOADED ALL DATA=====================================*@
+
+@if (folderList != null && folderList.Any())
+{
+    <div class="card shadow border-success rounded-4 mt-4">
+        <div class="card-header bg-success text-white text-center rounded-top-4">
+            <h5 class="mb-0 fw-bold">📁 All Upload Folders</h5>
+        </div>
+
+        <div class="card-body p-4">
+            <table class="table table-bordered table-striped" id="folderTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th>DP Code</th>
+                        <th>Account Number</th>
+                        <th>Folder Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in folderList)
+                    {
+                        <tr>
+                            <td>@item.DPCODE</td>
+                            <td>@item.Accountnumber</td>
+                            <td>@item.FolderName</td>
+                            <td>
+                                <button class="btn btn-outline-info btn-sm" onclick="viewFolderImages('@item.FolderName')">
+                                    View
+                                </button>
+
+                                @if (System.IO.File.Exists(Server.MapPath(item.MergedPdfPath)))
+                                {
+                                    <a href="@item.MergedPdfPath" target="_blank" class="btn btn-outline-danger btn-sm ms-2">
+                                        View PDF
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted ms-2">PDF not found</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning mt-4">
+        No uploaded folders found.
+    </div>
+}
+
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content border-info rounded-4">
+            <div class="modal-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h5 class="modal-title">📄 Folder Images</h5>
+                <a id="downloadLink" class="btn btn-light btn-sm ms-auto" target="_blank">
+                    ⬇️ Download PDF
+                </a>
+                <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <iframe id="folderIframe" style="width: 100%; height: 600px; border: none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function viewFolderImages(folderName) {
+        const url = '@Url.Action("GenerateFolderPdf", "ImageUpload")' + '?folder=' + encodeURIComponent(folderName);
+        document.getElementById('folderIframe').src = url;
+        const downloadLink = document.getElementById('downloadLink');
+        downloadLink.href = url;
+        downloadLink.target = '_blank';
+        const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+        modal.show();
+    }
+</script>
+
+@*=======================~~END~~~=======================UPLOADED ALL DATA==============================================================================*@
+
+@*========================~~START~~=======~IMPLEMENTED~BY~PRAMOD~MISHRA~26062025~===============UPLOADED  DATA FOR RAILWAYS============================*@
+<!--================= Railway Table Container========= -->
+<!-- RAILWAY RESULT CONTAINER -->
+<div id="railwaysResultContainer" class="d-none justify-content-center mt-4">
+    <div class="card shadow border-primary rounded-4 p-3 w-100" style="max-width: 1200px;">
+        <div class="text-end mb-2">
+            <button onclick="hideRailwaysTable()" class="btn btn-sm btn-danger">Close</button>
+        </div>
+        <div class="card-header bg-primary text-white text-center rounded-top-4">
+            <h5 class="mb-0 fw-bold">📋 Railway Uploaded Files</h5>
+        </div>
+        <div class="card-body">
+            <table id="railwayTable" class="table table-bordered table-hover table-striped w-100">
+                <thead class="table-dark">
+                    <tr>
+                        <th>DP Code</th>
+                        <th>Account No</th>
+                        <th>PPANO</th>
+                        <th>File Name</th>
+                        <th>Uploaded Date</th>
+                        <th>Uploaded By</th>
+                        <th>Approved By</th>
+                        <th>Account Type</th>
+                    </tr>
+                </thead>
+                <tbody id="railwayTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPT SECTION -->
+<script>
+    function loadRailwaysData() {
+        $.ajax({
+            url: '@Url.Action("UPLOADIMAGESOFRAILWAYS", "ImageUpload")',
+            type: 'GET',
+            dataType: 'json', // ensure JSON is expected
+            success: function (data) {
+                console.log("✅ Received Data:", data);
+
+                if (!Array.isArray(data)) {
+                    alert("❌ Unexpected data format.");
+                    return;
+                }
+
+                let rows = '';
+                data.forEach(item => {
+                    rows += `
+                        <tr>
+                            <td>${item.DPCODE}</td>
+                            <td>${item.Accountnumber}</td>
+                            <td>${item.PPANO}</td>
+                            <td>${item.FILENAME}</td>
+                            <td>${formatDate(item.UPLOADEDDATE)}</td>
+                            <td>${item.UPLOADEDBY}</td>
+                            <td>${item.APPROVEDBY}</td>
+                            <td>${item.ACCOUNTTYPE}</td>
+                        </tr>`;
+                });
+
+                $('#railwayTableBody').html(rows);
+                $('#railwaysResultContainer').removeClass('d-none').addClass('d-flex');
+
+                if (!$.fn.DataTable.isDataTable('#railwayTable')) {
+                    $('#railwayTable').DataTable({
+                        paging: true,
+                        searching: true,
+                        ordering: true,
+                        pageLength: 5,
+                        language: {
+                            search: "Search:"
+                        }
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("❌ Error:", xhr.responseText);
+                alert("❌ Error loading Railway uploads.");
+            }
+        });
+    }
+
+    function hideRailwaysTable() {
+        $('#railwaysResultContainer')
+            .addClass('d-none')
+            .removeClass('d-flex')
+            .find('tbody').html('');
+
+        if ($.fn.DataTable.isDataTable('#railwayTable')) {
+            $('#railwayTable').DataTable().destroy();
+        }
+    }
+
+    function formatDate(dateStr) {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-GB'); // format: dd/mm/yyyy
+    }
+</script>
+
+@*=======================~~END~~~======================================================================================================================*@
+
+
+
+@*<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>*@
+
+<script src="~/assets/Bootstrap/bootstrap.bundle.min.js"></script>
+<link href="~/assets/Bootstrap/bootstrap.min.css" rel="stylesheet" />
+
+<!-- DataTables Scripts -->
+@*<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />*@
+@*<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>*@
+@*<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>*@
+
+<link href="~/assets/JQUERY/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="~/assets/JQUERY/jquery-3.6.0/dist/jquery.min.js"></script>
+<script src="~/assets/JQUERY/jquery.dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var table = $('#folderTable').DataTable({
+            paging: true,
+            searching: true,
+            ordering: true,
+            pageLength: 5,
+            language: {
+                search: "SEARCH:"
+            }
+        });
+
+        // Custom search
+        $('#searchDpcode').on('keyup', function () {
+            table.column(0).search(this.value).draw(); // DP Code column
+        });
+
+        $('#searchAccount').on('keyup', function () {
+            table.column(1).search(this.value).draw(); // Account Number column
+        });
+    });
+</script>
+
+<script>
+    function openPDFModal() {
+        fetch('@Url.Action("GeneratePDF", "ImageUpload")')
+            .then(response => response.json())
+            .then(data => {
+                $('#pdfIframe').attr('src', data.url);
+                $('#downloadPdfBtn').attr('href', data.url);
+                $('#pdfModal').modal('show');
+            })
+            .catch(error => {
+                alert("❌ Error generating PDF: " + error);
+            });
+    }
+</script>

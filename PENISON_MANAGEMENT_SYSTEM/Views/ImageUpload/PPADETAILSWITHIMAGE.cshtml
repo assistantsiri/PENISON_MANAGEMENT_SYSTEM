@@ -1,0 +1,692 @@
+﻿@model PENISON_MANAGEMENT_SYSTEM.Models.RailwayAccountViewModel
+
+@{
+    ViewBag.Title = "PPADETAILSWITHIMAGE";
+}
+<div class="headerforPPADETAILSIMAGE">
+    <h2><i class="fas fa-file-contract"></i>PPA DETAILS OF EXISTING IMAGE</h2>
+</div>
+<br />
+<br />
+
+@*<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>*@
+@*<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">*@
+@*<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">*@
+@*<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>*@
+
+<script src="~/assets/JQUERY/jquery-3.6.0/dist/jquery.js"></script>
+<script src="~/assets/JQUERY/jquery-3.6.0/dist/jquery.min.js"></script>
+<script src="~/assets/Bootstrap/bootstrap-3.4.1-dist/js/bootstrap.min.js"></script>
+<link href="~/assets/Bootstrap/bootstrap-3.4.1-dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/assets/Awesome/fontawesome-free-6.1.1-web/css/all.css" rel="stylesheet" />
+<link href="~/assets/Awesome/fontawesome-free-6.1.1-web/css/all.min.css" rel="stylesheet" />
+
+@using (Html.BeginForm("PPADETAILSWITHIMAGE", "ImageUpload", FormMethod.Get))
+{
+    @Html.Hidden("page", 1)
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="searchAccountNumber" style="color:cornflowerblue">Search by Account Number:</label>
+                @Html.TextBox("searchAccountNumber", Model.SearchTerm,
+                            new { @class = "form-control", placeholder = "Enter account number", required = "required" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="bankType" style="color:cornflowerblue">Filter by Bank Type:</label>
+                @Html.DropDownList("bankType", new SelectList(Model.BankTypes, "Value", "Text", Model.SelectedBankType),
+                                new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label style="visibility: hidden;">Search</label><br />
+                <button type="submit" class="btn btn-primary ">
+                    <i class="fas fa-search"></i>
+                    Search Now
+                </button>
+                @*@Html.ActionLink("Clear", "ImageUpload", null, new { @class = "btn btn-default" })*@
+            </div>
+        </div>
+    </div>
+}
+
+<hr />
+
+@if (!string.IsNullOrEmpty(Model.SearchTerm))
+{
+    if (Model.Accounts != null && Model.Accounts.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Account Number</th>
+                        <th>PPO Number</th>
+                        <th>Name</th>
+                        <th>DP Code</th>
+                        @*<th>Type</th>*@
+                        <th>Bank Type</th>
+                        @*<th>Calculated DP Code</th>*@
+                        <th>Images Found</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var account in Model.Accounts)
+                    {
+                        <tr>
+                            <td>@account.PPA_ACNO</td>
+                            <td>@account.PPA_PPONO</td>
+                            <td>@account.PPA_name</td>
+                            <td>@account.PPA_DPCD</td>
+                            @*<td>@account.PPA_Type</td>*@
+                            <td>
+                                <span class="label
+                                    @(account.BankType == "canarabank" ? "label-success" :
+                                      account.BankType == "syndicate" ? "label-primary" : "label-default")">
+                                    @account.BankType
+                                </span>
+                            </td>
+                            @*<td>@account.CalculatedDpcode</td>*@
+                            <td>
+                                @if (account.HasImages)
+                                {
+                                    <span class="badge badge-success">@account.ImageCount image(s)</span>
+                                    <br />
+                                    <small class="text-muted">
+                                        @string.Join(", ", account.ImagePaths.Select(Path.GetFileName))
+                                    </small>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger">0 images</span>
+                                }
+                            </td>
+                            <td>
+                                @if (account.HasImages)
+                                {
+                                    <button type="button" class="btn btn-info btn-sm view-images-btn"
+                                            data-account="@account.PPA_ACNO"
+                                            data-dpcode="@account.PPA_DPCD"
+                                            data-filenames="@string.Join(",", account.ImagePaths.Select(Path.GetFileName))">
+                                        View Images
+                                    </button>
+                                }
+                                else
+                                {
+                                    <span class="text-danger">No images</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+
+        if (Model.TotalPages > 1)
+        {
+            <div class="pagination-container">
+                <ul class="pagination">
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <li>@Html.ActionLink("« First", "PPADETAILSWITHIMAGE", new { searchAccountNumber = Model.SearchTerm, bankType = Model.SelectedBankType, page = 1 })</li>
+                        <li>@Html.ActionLink("‹ Prev", "PPADETAILSWITHIMAGE", new { searchAccountNumber = Model.SearchTerm, bankType = Model.SelectedBankType, page = Model.CurrentPage - 1 })</li>
+                    }
+
+                    @{
+                        int startPage = Math.Max(1, Model.CurrentPage - 2);
+                        int endPage = Math.Min(Model.TotalPages, startPage + 4);
+                        if (endPage - startPage < 4)
+                        {
+                            startPage = Math.Max(1, endPage - 4);
+                        }
+                    }
+
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        <li class="@(i == Model.CurrentPage ? "active" : "")">
+                            @Html.ActionLink(i.ToString(), "PPADETAILSWITHIMAGE", new { searchAccountNumber = Model.SearchTerm, bankType = Model.SelectedBankType, page = i })
+                        </li>
+                    }
+
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <li>@Html.ActionLink("Next ›", "PPADETAILSWITHIMAGE", new { searchAccountNumber = Model.SearchTerm, bankType = Model.SelectedBankType, page = Model.CurrentPage + 1 })</li>
+                        <li>@Html.ActionLink("Last »", "PPADETAILSWITHIMAGE", new { searchAccountNumber = Model.SearchTerm, bankType = Model.SelectedBankType, page = Model.TotalPages })</li>
+                    }
+                </ul>
+                <div class="pagination-info">
+                    Showing @((Model.CurrentPage - 1) * 10 + 1) to @(Math.Min(Model.CurrentPage * 10, Model.TotalItems)) of @Model.TotalItems entries
+                </div>
+            </div>
+        }
+
+
+        <div class="image-display-frame" style="margin-top: 30px; display: none;">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">ACCOUNT NUMBER: - <span id="currentAccountNumber"></span></h3>
+                    <button type="button" class="close close-viewer" aria-label="Close" style="float: right; margin-top: -20px;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="panel-body text-center">
+                    <div id="imageNavigation" style="margin-bottom: 15px; display: none;">
+                        <button id="prevImage" class="btn btn-info btn-sm">
+                            <i class="fa fa-chevron-left"></i> Previous
+                        </button>
+                        <span id="imageCounter" style="margin: 0 15px;"></span>
+                        <button id="nextImage" class="btn btn-success btn-sm">
+                            Next <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <img id="displayedImage" src="" alt="Selected Image" class="img-responsive" style="max-height: 1000px; margin: 0 auto; display: none;" />
+                    <div id="imageInfo" class="text-muted" style="margin-top: 20px;"></div>
+                    <div id="imageError" class="text-danger" style="display: none; margin-top: 10px;">
+                        Image not found!
+                    </div>
+                    <div id="loadingSpinner" class="text-center" style="display: none;">
+                        <i class="fa fa-spinner fa-spin" style="font-size: 24px;"></i>
+                        <p>Loading image...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        @*<div class="alert alert-warning">
+                    No accounts found for search term: <strong>@Model.SearchTerm</strong>
+            </div>*@
+        @*After search user will not get any account then showing msg*@
+        <div class="containerforaccountnotfound">
+            <div id="alertCard" class="alert-card">
+                <div class="icon-container">
+                    <i class="fas fa-search alert-icon"></i>
+                </div>
+                <h2 class="alert-title">No Accounts Found</h2>
+                <p class="alert-message">We couldn't find any accounts matching your search criteria.</p>
+                <div class="search-term">@Model.SearchTerm</div>
+                <p class="alert-message">Please try a different search term or check account number !.</p>
+                <button id="tryAgainBtn" class="action-button">
+                    <i class="fas fa-redo-alt"></i> Try Again
+                </button>
+            </div>
+
+            @*<div id="successMessage" class="success-message hidden">
+                    <h2><i class="fas fa-check-circle"></i> Search reset successfully!</h2>
+                    <p>You can now try a new search</p>
+                </div>*@
+        </div>
+
+    }
+}
+else
+{
+    <div class="alert alert-info">
+        Please enter an account number to search.
+    </div>
+}
+
+
+@section Scripts {
+    <script>
+
+        var currentImageIndex = 0;
+        var currentImageFiles = [];
+        var currentAccountNumber = '';
+        var currentDpCode = '';
+
+        $(document).ready(function() {
+
+            $('.view-images-btn').on('click', function() {
+                currentAccountNumber = $(this).data('account');
+                currentDpCode = $(this).data('dpcode');
+                var fileNamesString = $(this).data('filenames');
+
+
+                currentImageFiles = fileNamesString.split(',');
+                currentImageIndex = 0;
+
+
+                $('.image-display-frame').show();
+                $('#currentAccountNumber').text(currentAccountNumber);
+
+
+                if (currentImageFiles.length > 1) {
+                    $('#imageNavigation').show();
+                } else {
+                    $('#imageNavigation').hide();
+                }
+
+
+                loadImage(currentImageIndex);
+            });
+
+
+            $('#nextImage').on('click', function() {
+                if (currentImageIndex < currentImageFiles.length - 1) {
+                    currentImageIndex++;
+                    loadImage(currentImageIndex);
+                }
+            });
+
+
+            $('#prevImage').on('click', function() {
+                if (currentImageIndex > 0) {
+                    currentImageIndex--;
+                    loadImage(currentImageIndex);
+                }
+            });
+
+
+            $('.close-viewer').on('click', function() {
+                $('.image-display-frame').hide();
+            });
+
+
+            function loadImage(index) {
+                if (index < 0 || index >= currentImageFiles.length) return;
+
+                var fileName = currentImageFiles[index];
+
+
+                $('#loadingSpinner').show();
+                $('#displayedImage').hide();
+                $('#imageError').hide();
+
+
+                var imageUrl = '@Url.Action("GetImage", "ImageUpload")' +
+                               '?fileName=' + encodeURIComponent(fileName) +
+                               '&dpCode=' + encodeURIComponent(currentDpCode);
+
+
+                $('#imageCounter').text((index + 1) + ' of ' + currentImageFiles.length);
+
+
+                $('#imageInfo').text('File: ' + fileName);
+
+
+                var img = new Image();
+                img.onload = function() {
+                    $('#displayedImage').attr('src', imageUrl).show();
+                    $('#loadingSpinner').hide();
+                    $('#imageError').hide();
+
+
+                    $('#prevImage').prop('disabled', index === 0);
+                    $('#nextImage').prop('disabled', index === currentImageFiles.length - 1);
+                };
+                img.onerror = function() {
+                    $('#displayedImage').hide();
+                    $('#loadingSpinner').hide();
+                    $('#imageError').show().text('Image not found: ' + fileName);
+
+
+                    $('#prevImage').prop('disabled', index === 0);
+                    $('#nextImage').prop('disabled', index === currentImageFiles.length - 1);
+                };
+                img.src = imageUrl;
+            }
+
+
+            $('.view-images-btn').on('click', function() {
+                $('html, body').animate({
+                    scrollTop: $('.image-display-frame').offset().top
+                }, 500);
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const alertCard = document.getElementById('alertCard');
+            const tryAgainBtn = document.getElementById('tryAgainBtn');
+            const successMessage = document.getElementById('successMessage');
+
+            tryAgainBtn.addEventListener('click', function () {
+
+                alertCard.classList.add('close-card');
+                setTimeout(function () {
+                    alertCard.classList.add('hidden');
+                    successMessage.classList.remove('hidden');
+                    setTimeout(function () {
+                        successMessage.classList.add('hidden');
+                        alertCard.classList.remove('hidden', 'close-card');
+                    }, 3000);
+                }, 300);
+            });
+        });
+    </script>
+
+    <style>
+        .pagination-container {
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pagination {
+            margin: 0;
+            display: inline-block;
+        }
+
+            .pagination li {
+                display: inline;
+                margin: 0 2px;
+            }
+
+                .pagination li.active a {
+                    background-color: #337ab7;
+                    color: white;
+                    border-color: #337ab7;
+                }
+
+                .pagination li a {
+                    padding: 6px 12px;
+                    border: 1px solid #ddd;
+                    border-radius: 3px;
+                    text-decoration: none;
+                    color: #337ab7;
+                }
+
+        .pagination-info {
+            color: #777;
+            display: inline-block;
+            margin-left: 15px;
+        }
+
+        .image-display-frame {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
+
+        .label {
+            display: inline-block;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .label-success {
+            background-color: #5cb85c;
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #5b7cfa, #4a6bdf);
+            border: none;
+            border-radius: 5px;
+            padding: 14px 20px;
+            font-weight: 600;
+            width: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(74, 107, 223, 0.25);
+        }
+
+            .btn-primary:hover {
+                background: linear-gradient(to right, #4a6bdf, #3a5ac8);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(74, 107, 223, 0.35);
+            }
+
+        .btn-outline-light {
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-weight: 600;
+            width: 100%;
+            border: 1px solid #dce1e6;
+            color: #6c757d;
+            background: #f9fbfd;
+            transition: all 0.3s;
+        }
+
+            .btn-outline-light:hover {
+                background: #f1f5f9;
+                border-color: #c4c9d0;
+            }
+
+        .label-primary {
+            background-color: #337ab7;
+            color: white;
+        }
+
+        .label-default {
+            background-color: #777;
+            color: white;
+        }
+
+        .badge-success {
+            background-color: #5cb85c;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 3px;
+        }
+
+        .badge-danger {
+            background-color: #d9534f;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 3px;
+        }
+
+        #imageNavigation {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        #imageCounter {
+            font-weight: bold;
+            margin: 0 15px;
+        }
+
+        .search-btn {
+            position: relative;
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            color: #fff;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 6px 15px rgba(37, 117, 252, 0.4);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+
+            .search-btn::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: -75%;
+                width: 50%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.4);
+                transform: skewX(-25deg);
+                transition: 0.5s;
+            }
+
+            .search-btn:hover::before {
+                left: 130%;
+            }
+
+
+            .search-btn:hover {
+                transform: translateY(-3px) scale(1.05);
+                box-shadow: 0 10px 25px rgba(37, 117, 252, 0.6);
+            }
+
+
+            .search-btn:active {
+                transform: translateY(1px) scale(0.97);
+                box-shadow: 0 4px 10px rgba(37, 117, 252, 0.4);
+            }
+
+
+            .search-btn i {
+                transition: transform 0.3s ease;
+                font-size: 20px;
+            }
+
+            .search-btn:active i {
+                transform: rotate(360deg);
+            }
+
+
+
+        .containerforaccountnotfound {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .alert-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 35px 30px;
+            text-align: center;
+            width: 100%;
+            border-left: 5px solid #FFC107;
+            animation: fadeIn 0.6s ease-out;
+            position: relative;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .icon-container {
+            margin-bottom: 20px;
+        }
+
+        .alert-icon {
+            font-size: 70px;
+            color: #FFC107;
+            animation: bounce 1s ease;
+        }
+
+        .alert-title {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .alert-message {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .search-term {
+            background-color: #FFF8E1;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            font-weight: 500;
+            color: #7D6608;
+            margin: 15px 0;
+            font-size: 18px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .action-button {
+            background-color: #FFC107;
+            color: #333;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+            .action-button:hover {
+                background-color: #FFB300;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+            }
+
+            .action-button:active {
+                transform: translateY(0);
+            }
+
+        .hidden {
+            display: none;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 20px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 10px;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-20px);
+            }
+
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .close-card {
+            transform: scale(0.9);
+            opacity: 0;
+        }
+
+        .headerforPPADETAILSIMAGE {
+            background: linear-gradient(90deg, #3498db, #2c3e50);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+            .headerforPPADETAILSIMAGE h2 {
+                font-size: 2.5rem;
+                margin-bottom: 10px;
+                font-weight: 700;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+            }
+
+        .img-responsive {
+            width: 50%;
+            height: 40%;
+        }
+    </style>
+}

@@ -1,0 +1,534 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewBag.Title - PMS</title>
+    @*Commented All CDN Link*@
+    @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />*@
+    @*<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">*@
+    @*<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>*@
+    @*<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />*@
+    @*To Here*@
+    <link href="~/assets/Awesome/fontawesome-free-6.1.1-web/css/all.css" rel="stylesheet" />
+    <link href="~/assets/Awesome/fontawesome-free-6.1.1-web/css/all.min.css" rel="stylesheet" />
+    <link href="~/assets/Bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/assets/Bootstrap/bootstrap.bundle.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #1a3a8f;
+            --secondary-color: #f6b26b;
+            --accent-color: #1ABC9C;
+            --dark-color: #2C3E50;
+            --light-color: #ffffff;
+            --text-light: #ffffff;
+            --sidebar-bg: linear-gradient(180deg, #1a3a8f 0%, #0d2a6e 100%);
+            --header-bg: linear-gradient(95deg, #1a3a8f 0%, #f6b26b 50%, #ffffff 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .header {
+            height: 70px;
+            background: var(--header-bg);
+            background-size: 200% 200%;
+            /*animation: gradientShift 8s ease infinite;*/
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        @@keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .header h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            flex: 1;
+            text-align: center;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .bank-logo {
+            width: 100px;
+            height: auto;
+            filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .user-text {
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 90px 30px 30px;
+            flex: 1;
+            transition: margin-left 0.3s ease-in-out;
+            min-height: calc(100vh - 70px);
+        }
+
+            .content.collapsed {
+                margin-left: 80px;
+            }
+
+        .footer {
+            background: var(--dark-color);
+            color: var(--text-light);
+            text-align: center;
+            padding: 15px;
+            margin-top: auto;
+            font-size: 14px;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--sidebar-bg);
+            color: white;
+            margin-top: 70px;
+            height: calc(100vh - 70px);
+            padding: 20px 0;
+            position: fixed;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            overflow-y: auto;
+            transition: width 0.3s ease-in-out;
+        }
+
+            .sidebar.collapsed {
+                width: 80px;
+            }
+
+            .sidebar a {
+                display: flex;
+                align-items: center;
+                padding: 16px 25px;
+                margin: 8px 15px;
+                color: rgba(255, 255, 255, 0.9);
+                text-decoration: none;
+                border-radius: 12px;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+                font-size: 15px;
+                font-weight: 500;
+                letter-spacing: 0.5px;
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(10px);
+            }
+
+            .sidebar.collapsed a {
+                padding: 16px 0;
+                justify-content: center;
+                margin: 8px 10px;
+            }
+
+            .sidebar a:hover {
+                transform: translateX(5px);
+                background: rgba(255, 255, 255, 0.15);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            }
+
+            .sidebar a:nth-child(1):hover {
+                background: linear-gradient(45deg, #FF9A9E 0%, #FAD0C4 100%);
+            }
+
+            .sidebar a:nth-child(2):hover {
+                background: linear-gradient(45deg, #A1C4FD 0%, #C2E9FB 100%);
+            }
+
+            .sidebar a:nth-child(3):hover {
+                background: linear-gradient(45deg, #84FAB0 0%, #8FD3F4 100%);
+            }
+
+            .sidebar a:nth-child(4):hover {
+                background: linear-gradient(45deg, #FFC3A0 0%, #FFAFBD 100%);
+            }
+
+            .sidebar a:nth-child(5):hover {
+                background: linear-gradient(45deg, #D4FC79 0%, #96E6A1 100%);
+            }
+
+            .sidebar a:nth-child(6):hover {
+                background: linear-gradient(45deg, #A6C1EE 0%, #FBC2EB 100%);
+            }
+
+            .sidebar a:nth-child(7):hover {
+                background: linear-gradient(45deg, #FFDEE9 0%, #B5FFFC 100%);
+            }
+
+            .sidebar a:nth-child(8):hover {
+                background: linear-gradient(45deg, #FF9A9E 0%, #FECFEF 100%);
+            }
+
+            .sidebar a:nth-child(9):hover {
+                background: linear-gradient(45deg, #FFECD2 0%, #FCB69F 100%);
+            }
+
+            .sidebar a:nth-child(10):hover {
+                background: linear-gradient(45deg, #D4FC79 0%, #96E6A1 100%);
+            }
+
+            .sidebar a:nth-child(11):hover {
+                background: linear-gradient(45deg, #FF6B6B 0%, #FF8E8E 100%);
+            }
+
+            .sidebar a i {
+                font-size: 18px;
+                width: 30px;
+                text-align: center;
+                transition: all 0.3s ease;
+                margin-right: 15px;
+            }
+
+            .sidebar.collapsed a i {
+                margin-right: 0;
+            }
+
+            .sidebar a:hover i {
+                transform: scale(1.2);
+                animation: bounce 0.5s ease;
+            }
+
+        @@keyframes bounce {
+            0%, 100% {
+                transform: translateY(0) scale(1.2);
+            }
+
+            50% {
+                transform: translateY(-5px) scale(1.2);
+            }
+        }
+
+        .sidebar a span {
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed a span {
+            display: none;
+        }
+
+        .sidebar a:hover span {
+            font-weight: 600;
+            letter-spacing: 0.8px;
+        }
+
+        .sidebar a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, #00c6ff, #0072ff);
+            transform: scaleY(0);
+            transition: transform 0.2s ease;
+        }
+
+        .sidebar a:hover::before {
+            transform: scaleY(1);
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            top: 85px;
+            left: 230px;
+            width: 30px;
+            height: 30px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed + .sidebar-toggle {
+            left: 60px;
+        }
+
+        .sidebar-toggle i {
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed + .sidebar-toggle i {
+            transform: rotate(180deg);
+        }
+
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            background: var(--card-bg);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+
+
+        @@media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+            }
+
+                .sidebar a span {
+                    display: none;
+                }
+
+                .sidebar a {
+                    justify-content: center;
+                    padding: 20px 0;
+                }
+
+                    .sidebar a i {
+                        margin-right: 0;
+                    }
+
+            .content {
+                margin-left: 80px;
+            }
+
+            .sidebar-toggle {
+                display: none;
+            }
+
+            .header h2 {
+                font-size: 18px;
+            }
+
+            .user-text span {
+                display: none;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .header {
+                padding: 0 15px;
+            }
+
+            .content {
+                padding: 90px 15px 15px;
+                margin-left: 0;
+            }
+
+            .sidebar {
+                width: 0;
+                overflow: hidden;
+            }
+
+                .sidebar.active {
+                    width: 250px;
+                }
+
+            .bank-logo {
+                width: 90px;
+            }
+
+            .header h2 {
+                font-size: 16px;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 15px;
+                z-index: 1002;
+                background: var(--primary-color);
+                color: white;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            }
+        }
+    </style>
+</head>
+<body>
+   
+    <div class="mobile-menu-toggle d-lg-none" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </div>
+
+   
+    <header class="header">
+        <div class="logo-container">
+            <img src="@Url.Content("~/assets/images/CANARABANK.png")" alt="Canara Bank Logo" class="bank-logo" />
+        </div>
+
+        <h2>PENSION MANAGEMENT SYSTEM</h2>
+
+        <div class="user-info">
+            <img src="@Url.Content("~/assets/images/human-resources.gif")" alt="User Icon" class="user-icon" />
+            <span class="user-text">@Session["STAFFNAME"] <span class="d-none d-md-inline">(@Session["STAFFNO"])</span></span>
+        </div>
+    </header>
+
+    
+    <nav class="sidebar" id="sidebar">
+        <a href="@Url.Action("Dashboard", "DashBoard")">
+            <i class="fas fa-home" style="color: #FF9A9E"></i> <span>DASHBOARD</span>
+        </a>
+        <a href="@Url.Action("UPLOADPDF", "ImageUpload")">
+            <i class="fas fa-file-pdf" style="color: #A1C4FD"></i> <span>PDF FILE UPLOAD</span>
+        </a>
+        <a href="@Url.Action("UserUploadImage", "ImageUpload")">
+            <i class="fas fa-file-image" style="color: #84FAB0"></i> <span>JPG FILE UPLOAD</span>
+        </a>
+        <a href="@Url.Action("Upload", "EXCELFILEUPLOAD")">
+            <i class="fas fa-file-excel" style="color: #FFC3A0"></i> <span>EXCEL FILE UPLOAD</span>
+        </a>
+        <a href="@Url.Action("UploadedList", "ImageUpload")">
+            <i class="fas fa-list" style="color: #D4FC79"></i> <span>FILE UPLOADED</span>
+        </a>
+        <a href="@Url.Action("ALLREPORTS", "Report")">
+            <i class="fas fa-chart-bar" style="color: #A6C1EE"></i> <span>ALL REPORT</span>
+        </a>
+        <a href="@Url.Action("SFTPUPLOADDATA", "SFTP")">
+            <i class="fas fa-cloud-upload-alt" style="color: #FFDEE9"></i> <span>SFTP FILE UPLOAD</span>
+        </a>
+
+        <a href="@Url.Action("PROJECTDEATILS", "Home")">
+            <i class="fas fa-project-diagram" style="color: #FF9A9E"></i> <span>PROJECT DOCUMENTS SOP</span>
+        </a>
+        <a href="@Url.Action("NOTEANDDOCUMENTUPLOADINPMS", "Report")">
+            <i class="fas fa-question-circle" style="color: #FFECD2"></i> <span>PMS NOTES AND DOC UPLOAD</span>
+        </a>
+        <a href="@Url.Action("Index", "Gallery")">
+            <i class="fas fa-list" style="color: #FF9A9E"></i> <span>VIEW EXISTING IMAGES</span>
+        </a>
+        <a href="@Url.Action("Register", "User")">
+            <i class="fas fa-user-plus" style="color: #FF6B6B"></i> <span>NEW REGISTER </span>
+        </a>
+        <a href="@Url.Action("Logout", "User")">
+            <i class="fas fa-sign-out-alt" style="color: #FF6B6B"></i> <span>LOGOUT</span>
+        </a>
+    </nav>
+
+    
+    <div class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-chevron-left"></i>
+    </div>
+
+  
+    <div class="content" id="mainContent">
+        <main role="main">
+            @RenderBody()
+            @RenderSection("Scripts", required: false)
+        </main>
+    </div>
+
+  
+    <footer class="footer">
+        <p class="mb-0">© @DateTime.Now.Year CCSL CANBANK COMPUTER SERVICE LIMITED. All rights reserved.</p>
+    </footer>
+
+    <script>
+       
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('mainContent');
+            const toggle = document.getElementById('sidebarToggle');
+
+            sidebar.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+        }
+
+       
+        document.getElementById('mobileMenuToggle').addEventListener('click', function () {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        //setTimeout(function () {
+        //    window.location.href = "/User/Logout";
+        //}, 100000);
+
+
+        //setTimeout(function () {
+        //    window.location.href = "/User/Logout";
+        //}, 20 * 60 * 1000);
+
+
+       
+        document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+    </script>
+</body>
+</html>

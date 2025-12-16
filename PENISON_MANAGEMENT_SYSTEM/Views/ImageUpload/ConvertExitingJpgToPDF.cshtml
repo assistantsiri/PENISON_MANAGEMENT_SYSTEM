@@ -1,0 +1,1159 @@
+﻿@model IEnumerable<PENISON_MANAGEMENT_SYSTEM.Models.ConversionSummaryModel_Log>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Custom CSS -->
+<style>
+    .conversion-container {
+        margin: 30px auto;
+        max-width: 1200px;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        padding: 30px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .conversion-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+        .conversion-header h2 {
+            color: #2c3e50;
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .conversion-header p {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+    .start-conversion-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+        .start-conversion-section h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .start-conversion-section p {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+
+    .convert-btn {
+        background: #ff6b6b;
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    }
+
+        .convert-btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        .convert-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+    .progress-section {
+        display: none;
+        background: #f8f9fa;
+        padding: 30px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        border-left: 5px solid #4CAF50;
+    }
+
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+        .progress-header h4 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin: 0;
+        }
+
+    .session-id {
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-family: monospace;
+    }
+
+    .progress-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+        .stat-card h5 {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .stat-card.success .stat-value {
+            color: #28a745;
+        }
+
+        .stat-card.failed .stat-value {
+            color: #dc3545;
+        }
+
+        .stat-card.progress .stat-value {
+            color: #ffc107;
+        }
+
+    .progress-bar-container {
+        background: #e9ecef;
+        border-radius: 10px;
+        height: 20px;
+        margin: 20px 0;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #4CAF50, #45a049);
+        border-radius: 10px;
+        transition: width 0.5s ease-in-out;
+        position: relative;
+    }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background-image: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent);
+            background-size: 1rem 1rem;
+            animation: progress-stripes 1s linear infinite;
+        }
+
+    @@keyframes progress-stripes {
+        0% {
+            background-position: 1rem 0;
+        }
+        100% {
+            background-position: 0 0;
+        }
+    }
+
+    .current-task {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        border-left: 4px solid #007bff;
+    }
+
+        .current-task h6 {
+            color: #495057;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .current-task p {
+            color: #6c757d;
+            margin: 0;
+            font-family: monospace;
+        }
+
+    .live-logs {
+        background: #1e1e1e;
+        color: #00ff00;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        height: 200px;
+        overflow-y: auto;
+        margin-top: 20px;
+    }
+
+        .live-logs .log-entry {
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+
+            .live-logs .log-entry.success {
+                color: #00ff00;
+            }
+
+            .live-logs .log-entry.error {
+                color: #ff6b6b;
+            }
+
+            .live-logs .log-entry.info {
+                color: #4da6ff;
+            }
+
+    .results-section {
+        display: none;
+    }
+
+    .summary-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+        .summary-table th, .summary-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .summary-table th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .summary-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+    .summary-total {
+        margin-top: 25px;
+        text-align: center;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #28a745;
+        padding: 15px;
+        background: #f8fff9;
+        border-radius: 8px;
+        border: 2px dashed #28a745;
+    }
+
+    .download-section {
+        background: #e3f2fd;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 25px;
+        text-align: center;
+    }
+
+        .download-section h5 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+    .download-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: white;
+        color: #1976d2;
+        border: 2px solid #1976d2;
+        padding: 10px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        margin: 0 10px;
+        transition: all 0.3s ease;
+    }
+
+        .download-btn:hover {
+            background: #1976d2;
+            color: white;
+            text-decoration: none;
+        }
+
+    .loader {
+        display: none;
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #4CAF50;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+
+    @@keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6c757d;
+    }
+
+    .empty-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-state h4 {
+        color: #495057;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .empty-state p {
+        margin-bottom: 25px;
+        font-size: 16px;
+    }
+
+    .empty-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .folder-path {
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Custom Alert Styles */
+    .custom-alert-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+    }
+
+    .custom-alert {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .custom-alert-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+    }
+
+    .custom-alert-title {
+        margin: 0 0 10px 0;
+        color: #333;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .custom-alert-text {
+        margin: 0 0 20px 0;
+        color: #666;
+        line-height: 1.4;
+        font-size: 1rem;
+    }
+
+    .custom-alert-button {
+        background: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        min-width: 80px;
+    }
+
+    .custom-alert-button.error {
+        background: #f44336;
+    }
+
+    .custom-alert-button.warning {
+        background: #ff9800;
+    }
+
+    .custom-alert-button.info {
+        background: #2196F3;
+    }
+</style>
+
+<div class="conversion-container">
+
+    <div class="conversion-header">
+        <h2>🔄 JPG to PDF Conversion</h2>
+        <p>Convert your JPG images to PDF documents and track the conversion progress in real-time</p>
+    </div>
+    <div class="download-section">
+        <button class="download-btn" id="downloadExcel" onclick="downloadConversionReport()">
+            📊 Download Excel Report
+        </button>
+        <span class="download-info" id="downloadInfo"></span>
+    </div>
+
+    <div class="start-conversion-section" id="startSection">
+        <h3>Ready to Convert Images?</h3>
+        <p>Click the button below to start converting JPG images from all configured folders to PDF format.</p>
+        <button class="convert-btn" id="startConversion">
+            🚀 Start Conversion Process
+        </button>
+    </div>
+
+
+    <div class="progress-section" id="progressSection">
+        <div class="progress-header">
+            <h4>🔄 Conversion in Progress</h4>
+            <span class="session-id" id="sessionId">Session: --</span>
+        </div>
+
+        <div class="progress-stats">
+            <div class="stat-card success">
+                <h5>Converted Files</h5>
+                <div class="stat-value" id="convertedCount">0</div>
+            </div>
+            <div class="stat-card failed">
+                <h5>Failed Files</h5>
+                <div class="stat-value" id="failedCount">0</div>
+            </div>
+            <div class="stat-card">
+                <h5>Total Processed</h5>
+                <div class="stat-value" id="totalCount">0</div>
+            </div>
+            <div class="stat-card progress">
+                <h5>Progress</h5>
+                <div class="stat-value" id="progressPercent">0%</div>
+            </div>
+        </div>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+        </div>
+
+        <div class="current-task">
+            <h6>📁 Current Task:</h6>
+            <p id="currentTask">Waiting to start conversion...</p>
+        </div>
+
+        <div class="live-logs" id="liveLogs">
+            <div class="log-entry info">[System] Ready to start conversion process...</div>
+        </div>
+
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p>Processing... Please wait</p>
+        </div>
+    </div>
+
+
+    <div class="results-section" id="resultsSection">
+        <div class="conversion-header">
+            <h2>✅ Conversion Complete!</h2>
+            <p>All images have been processed successfully</p>
+        </div>
+
+        <table class="summary-table">
+            <thead>
+                <tr>
+                    <th>Account Type</th>
+                    <th>DP Code</th>
+                    <th>Folder Path</th>
+                    <th>Converted</th>
+                    <th>Failed</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@(item.AccountType ?? "N/A")</td>
+                            <td>@(item.DpCode?? "N/A")</td>
+                            <td class="folder-path" title="@item.FolderPath">
+                                @(item.FolderPath ?? "No path specified")
+                            </td>
+                            <td>@item.TotalConverted</td>
+                            <td>@item.TotalFailed</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #6c757d;">
+                            <div style="font-size: 48px; margin-bottom: 10px;">📭</div>
+                            <h4 style="color: #6c757d; margin-bottom: 10px;">No Conversion Data Available</h4>
+                            <p style="margin: 0; font-size: 14px;">
+                                No images have been converted today.
+                                <br>Click the "Start Conversion" button to begin processing.
+                            </p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="summary-total">
+            🎉 Total Converted Today: <span id="finalTotal">@ViewBag.TotalConvertedAll</span> files
+        </div>
+
+        @*<div class="download-section">
+                <h5>📥 Download Reports</h5>
+                @if (ViewBag.LogFilePath != null)
+                {
+                    <a href="@Url.Action("DownloadLogFile", new { filePath = ViewBag.LogFilePath })" class="download-btn" target="_blank">
+                        📄 Session Log
+                    </a>
+                }
+                @if (ViewBag.SummaryReportPath != null)
+                {
+                    <a href="@Url.Action("DownloadLogFile", new { filePath = ViewBag.SummaryReportPath })" class="download-btn" target="_blank">
+                        📊 Summary Report
+                    </a>
+                }
+                @if (ViewBag.ProgressSnapshotPath != null)
+                {
+                    <a href="@Url.Action("DownloadLogFile", new { filePath = ViewBag.ProgressSnapshotPath })" class="download-btn" target="_blank">
+                        📈 Progress Snapshot
+                    </a>
+                }
+            </div>*@
+    </div>
+</div>
+
+<script>
+
+    function showAlert(title, text, icon, confirmButtonText) {
+        return new Promise((resolve) => {
+
+            const overlay = document.createElement('div');
+            overlay.className = 'custom-alert-overlay';
+
+
+            const modal = document.createElement('div');
+            modal.className = 'custom-alert';
+
+
+            let iconHtml = '';
+            let buttonClass = '';
+            switch(icon) {
+                case 'success':
+                    iconHtml = '✅';
+                    modal.style.borderTop = '4px solid #4CAF50';
+                    buttonClass = '';
+                    break;
+                case 'error':
+                    iconHtml = '❌';
+                    modal.style.borderTop = '4px solid #f44336';
+                    buttonClass = 'error';
+                    break;
+                case 'warning':
+                    iconHtml = '⚠️';
+                    modal.style.borderTop = '4px solid #ff9800';
+                    buttonClass = 'warning';
+                    break;
+                case 'info':
+                    iconHtml = 'ℹ️';
+                    modal.style.borderTop = '4px solid #2196F3';
+                    buttonClass = 'info';
+                    break;
+                default:
+                    iconHtml = '💡';
+                    modal.style.borderTop = '4px solid #9e9e9e';
+            }
+
+            modal.innerHTML = `
+                <div class="custom-alert-icon">${iconHtml}</div>
+                <h3 class="custom-alert-title">${title}</h3>
+                <p class="custom-alert-text">${text}</p>
+                <button class="custom-alert-button ${buttonClass}" onclick="closeCustomAlert(this, true)">
+                    ${confirmButtonText || 'OK'}
+                </button>
+            `;
+
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+
+
+            overlay.resolve = resolve;
+        });
+    }
+
+    function closeCustomAlert(button, result) {
+        const overlay = button.closest('.custom-alert-overlay');
+        if (overlay) {
+            if (overlay.resolve) {
+                overlay.resolve({ isConfirmed: result });
+            }
+            document.body.removeChild(overlay);
+        }
+    }
+
+
+    const Swal = {
+        fire: function(options) {
+            if (typeof options === 'string') {
+                options = { title: options, text: '', icon: 'info' };
+            }
+            return showAlert(options.title, options.text, options.icon, options.confirmButtonText);
+        }
+    };
+
+
+    let conversionInterval;
+    let isConverting = false;
+    let currentSessionId = null;
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Page loaded - initializing conversion system');
+
+
+        const startBtn = document.getElementById('startConversion');
+        if (startBtn) {
+            startBtn.addEventListener('click', startConversion);
+            console.log('Button event listener added');
+        } else {
+            console.error('Start button not found!');
+        }
+
+
+        const totalConverted = @(ViewBag.TotalConvertedAll != null ? ViewBag.TotalConvertedAll : 0);
+        if (totalConverted > 0) {
+            document.getElementById('startSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'block';
+            showAlert('Conversion Completed!', 'Total JPGs converted to DB today: ' + totalConverted, 'success', 'Great!');
+        }
+    });
+
+    function startConversion() {
+        console.log('Start conversion clicked');
+
+        if (isConverting) {
+            console.log('Conversion already in progress');
+            showAlert('Conversion Running', 'Conversion process is already running.', 'info', 'OK');
+            return;
+        }
+
+        isConverting = true;
+        const startBtn = document.getElementById('startConversion');
+        startBtn.disabled = true;
+        startBtn.innerHTML = '⏳ Starting...';
+
+
+        document.getElementById('startSection').style.display = 'none';
+        document.getElementById('progressSection').style.display = 'block';
+        document.getElementById('loader').style.display = 'block';
+
+
+        addLog('Starting conversion process...', 'info');
+
+
+        fetch('@Url.Action("_ConvertExitingJpgToPDF", "ImageUpload")', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            console.log('Response received:', response.status);
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Conversion response:', data);
+            if (data.success) {
+                currentSessionId = data.sessionId;
+                document.getElementById('sessionId').textContent = 'Session: ' + (currentSessionId ? currentSessionId.substring(0, 8) + '...' : '--');
+                addLog('Conversion process started successfully!', 'success');
+                addLog('Session ID: ' + currentSessionId, 'info');
+                startProgressMonitoring();
+            } else {
+                throw new Error(data.message || 'Failed to start conversion');
+            }
+        })
+        .catch(error => {
+            console.error('Conversion error:', error);
+            addLog('Error starting conversion: ' + error.message, 'error');
+            showAlert('Conversion Failed', 'Failed to start conversion process: ' + error.message, 'error', 'OK');
+            resetUI();
+        });
+    }
+
+    function startProgressMonitoring() {
+        console.log('Starting progress monitoring...');
+
+
+        setTimeout(() => {
+            document.getElementById('loader').style.display = 'none';
+        }, 2000);
+
+
+        updateProgress();
+        conversionInterval = setInterval(updateProgress, 3000);
+    }
+
+    function updateProgress() {
+        fetch('@Url.Action("GetConversionProgress", "ImageUpload")', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(progressData => {
+            console.log('Progress data:', progressData);
+            if (progressData.success) {
+                updateProgressUI(progressData);
+
+
+                if (!progressData.isRunning && progressData.folderProgress && progressData.folderProgress.length > 0) {
+                    completeConversion(progressData);
+                }
+            } else {
+                throw new Error(progressData.error || 'Failed to get progress');
+            }
+        })
+        .catch(error => {
+            console.error('Progress fetch error:', error);
+            addLog('Error fetching progress: ' + error.message, 'error');
+        });
+    }
+
+    function updateProgressUI(progressData) {
+        let totalConverted = 0;
+        let totalFailed = 0;
+        let totalFiles = 0;
+        let currentTask = 'Processing...';
+
+        if (progressData.overallProgress && progressData.overallProgress.length > 0) {
+            progressData.overallProgress.forEach(account => {
+                totalConverted += account.ConvertedFiles || 0;
+                totalFailed += account.FailedFiles || 0;
+                totalFiles += account.TotalFiles || 0;
+            });
+        }
+
+
+        if (progressData.folderProgress && progressData.folderProgress.length > 0) {
+            const activeFolder = progressData.folderProgress.find(f =>
+                f.Status === 'In Progress' || f.Status === 'Processing'
+            );
+
+            if (activeFolder) {
+                currentTask = `${activeFolder.AccountType} - ${activeFolder.DpCode}`;
+                if (activeFolder.CurrentFile && activeFolder.CurrentFile !== 'Not started') {
+                    currentTask += `: ${activeFolder.CurrentFile}`;
+                }
+            }
+        }
+
+
+        document.getElementById('convertedCount').textContent = totalConverted;
+        document.getElementById('failedCount').textContent = totalFailed;
+        document.getElementById('totalCount').textContent = totalConverted + totalFailed;
+
+
+        const progressPercent = totalFiles > 0 ? ((totalConverted + totalFailed) / totalFiles * 100) : 0;
+        document.getElementById('progressBar').style.width = Math.min(progressPercent, 100) + '%';
+        document.getElementById('progressPercent').textContent = Math.round(progressPercent) + '%';
+
+
+        document.getElementById('currentTask').textContent = currentTask;
+
+
+        if (Math.random() < 0.1 && totalFiles > 0) {
+            addLog(`Progress: ${totalConverted + totalFailed}/${totalFiles} files (${Math.round(progressPercent)}%)`, 'info');
+        }
+    }
+
+    function completeConversion(progressData) {
+        console.log('Conversion completed');
+        clearInterval(conversionInterval);
+        isConverting = false;
+
+        addLog('Conversion process completed!', 'success');
+
+
+        let totalConverted = 0;
+        let totalFailed = 0;
+
+        if (progressData.overallProgress && progressData.overallProgress.length > 0) {
+            progressData.overallProgress.forEach(account => {
+                totalConverted += account.ConvertedFiles || 0;
+                totalFailed += account.FailedFiles || 0;
+            });
+        }
+
+
+        setTimeout(() => {
+            document.getElementById('progressSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'block';
+
+
+            document.getElementById('finalTotal').textContent = totalConverted;
+
+
+            showAlert(
+                'Conversion Completed!',
+                `All images have been processed successfully!\n\nConverted: ${totalConverted} files\nFailed: ${totalFailed} files`,
+                'success',
+                'View Results'
+            ).then(() => {
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            });
+        }, 2000);
+    }
+
+    function addLog(message, type = 'info') {
+        const logsContainer = document.getElementById('liveLogs');
+        if (!logsContainer) {
+            console.error('Live logs container not found!');
+            return;
+        }
+
+        const logEntry = document.createElement('div');
+        logEntry.className = `log-entry ${type}`;
+
+        const timestamp = new Date().toLocaleTimeString();
+        logEntry.innerHTML = `[${timestamp}] ${message}`;
+
+        logsContainer.appendChild(logEntry);
+        logsContainer.scrollTop = logsContainer.scrollHeight;
+
+        console.log(`[${type.toUpperCase()}] ${message}`);
+    }
+
+    function resetUI() {
+        isConverting = false;
+        const startBtn = document.getElementById('startConversion');
+        if (startBtn) {
+            startBtn.disabled = false;
+            startBtn.innerHTML = '🚀 Start Conversion Process';
+        }
+        document.getElementById('loader').style.display = 'none';
+    }
+
+
+    window.startConversion = startConversion;
+    window.showAlert = showAlert;
+    window.closeCustomAlert = closeCustomAlert;
+
+
+  
+async function downloadConversionReport() {
+    const downloadBtn = document.getElementById('downloadExcel');
+    const downloadInfo = document.getElementById('downloadInfo');
+
+    try {
+        
+        downloadBtn.disabled = true;
+        downloadBtn.innerHTML = '⏳ Generating Report...';
+
+     
+        Swal.fire({
+            title: 'Generating Report',
+            text: 'Please wait while we prepare your Excel report...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+       
+        const response = await fetch('@Url.Action("DownloadConversionProgress", "ImageUpload")', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+     
+        const blob = await response.blob();
+
+        
+        if (blob.size === 0) {
+            throw new Error('Empty response from server');
+        }
+
+   
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('spreadsheet')) {
+            
+            const text = await blob.text();
+            try {
+                const errorData = JSON.parse(text);
+                throw new Error(errorData.error || 'Unknown error occurred');
+            } catch (e) {
+                throw new Error('Invalid response format');
+            }
+        }
+
+      
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+
+   
+        let filename = `Conversion_Report_${new Date().toISOString().slice(0,10)}.xlsx`;
+        const contentDisposition = response.headers.get('content-disposition');
+        if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+            if (filenameMatch && filenameMatch[1]) {
+                filename = filenameMatch[1].replace(/['"]/g, '');
+            }
+        }
+
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+
+      
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Download Started!',
+            text: 'Your Excel report is being downloaded.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+
+        downloadInfo.textContent = 'Report downloaded successfully!';
+
+    } catch (error) {
+        console.error('Download error:', error);
+
+       
+        Swal.fire({
+            icon: 'error',
+            title: 'Download Failed',
+            text: error.message || 'Failed to download report. Please try again.',
+            confirmButtonText: 'OK'
+        });
+
+        downloadInfo.textContent = 'Error: ' + (error.message || 'Failed to download');
+
+    } finally {
+       
+        downloadBtn.disabled = false;
+        downloadBtn.innerHTML = '📊 Download Excel Report';
+
+        
+        setTimeout(() => {
+            downloadInfo.textContent = '';
+        }, 5000);
+    }
+}
+
+
+function downloadWithProgress() {
+    const downloadBtn = document.getElementById('downloadExcel');
+
+    Swal.fire({
+        title: 'Preparing Report',
+        html: `
+            <div class="swal2-progress-container">
+                <div class="swal2-progress-bar">
+                    <div class="swal2-progress-fill" id="swalProgress"></div>
+                </div>
+                <div class="swal2-progress-text" id="swalProgressText">Initializing...</div>
+            </div>
+        `,
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 10;
+                const progressBar = document.getElementById('swalProgress');
+                const progressText = document.getElementById('swalProgressText');
+
+                if (progressBar && progressText) {
+                    progressBar.style.width = `${progress}%`;
+                    progressText.textContent = `Processing... ${progress}%`;
+                }
+
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                }
+            }, 200);
+
+           
+            downloadConversionReport().finally(() => {
+                clearInterval(progressInterval);
+            });
+        }
+    });
+}
+
+
+function downloadWithConfirmation() {
+    Swal.fire({
+        title: 'Download Conversion Report?',
+        text: 'This will generate an Excel file with all conversion progress data.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Download!',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            downloadConversionReport();
+        }
+    });
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const downloadBtn = document.getElementById('downloadExcel');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', downloadWithConfirmation);
+    }
+
+   
+    const style = document.createElement('style');
+    style.textContent = `
+        .swal2-progress-container {
+            margin: 20px 0;
+        }
+        .swal2-progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .swal2-progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border-radius: 5px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        .swal2-progress-text {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+    `;
+    document.head.appendChild(style);
+});
+
+
+async function checkServerStatus() {
+    try {
+        const response = await fetch('@Url.Action("CheckServerStatus", "ImageUpload")');
+        return response.ok;
+    } catch (error) {
+        return false;
+    }
+}
+
+
+async function downloadWithStatusCheck() {
+    const isServerOnline = await checkServerStatus();
+
+    if (!isServerOnline) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Server Unavailable',
+            text: 'Unable to connect to the server. Please try again later.',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    downloadWithConfirmation();
+}
+</script>

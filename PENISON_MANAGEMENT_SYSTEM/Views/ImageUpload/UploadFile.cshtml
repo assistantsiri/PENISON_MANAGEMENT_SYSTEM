@@ -1,0 +1,31 @@
+﻿@model PENISON_MANAGEMENT_SYSTEM.Models.Imageupload
+
+@{
+    ViewBag.Title = "Upload Folder and Select Account Type";
+}
+
+<h2>Upload Folder and Select Account Type</h2>
+
+@using (Html.BeginForm("UploadFile", "ImageUpload", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="form-group">
+        <label>Select Folder</label>
+        <input type="file" name="files" multiple webkitdirectory directory class="form-control" required />
+        <small class="text-muted">Note: Chrome/Edge only support folder upload.</small>
+    </div>
+
+    <div class="form-group">
+        <label>Account Type</label>
+        @Html.DropDownListFor(m => m.AccountType, (SelectList)ViewBag.AccountTypeList, new { @class = "form-control", required = "required" })
+    </div>
+
+    <button type="submit" class="btn btn-primary">Upload Folder</button>
+}
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-success mt-3">
+        @ViewBag.Message <br />
+        <strong>Selected Account Type:</strong> @ViewBag.SelectedType
+    </div>
+}

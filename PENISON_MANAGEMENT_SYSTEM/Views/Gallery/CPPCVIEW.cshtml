@@ -1,0 +1,1317 @@
+﻿@model PENISON_MANAGEMENT_SYSTEM.Models.GalleryViewModel
+@{
+    ViewBag.Title = "Image Gallery";
+}
+<script src="~/assets/jquery-3.7.1.min.js"></script>
+<script src="~/assets/sweetalert2.all.min.js"></script>
+<script src="~/assets/Excel.js"></script>
+<style>
+    body {
+        background: linear-gradient(120deg,#eef2f7,#f8fafc);
+        font-family: Inter, sans-serif;
+    }
+
+    .gallery-wrapper {
+        max-width: 1300px;
+        margin: 30px auto;
+        background: #fff;
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: 0 25px 60px rgba(0,0,0,.08);
+    }
+
+    .gallery-header {
+        text-align: center;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+    .bulk-controls-section {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .controls-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 15px;
+        align-items: center;
+    }
+
+    .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .control-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #475569;
+    }
+
+    .selection-summary {
+        display: flex;
+        gap: 25px;
+        margin: 15px 0;
+        padding: 15px;
+        background: white;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .summary-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .summary-label {
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    .summary-value {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .summary-value.total { color: #2563eb; }
+    .summary-value.selected { color: #16a34a; }
+    .summary-value.converted { color: #7c3aed; }
+    .summary-value.pending { color: #dc2626; }
+
+    .bulk-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        background: white;
+        color: #475569;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+    }
+
+    .select-btn {
+        background: #eff6ff;
+        border-color: #2563eb;
+        color: #2563eb;
+    }
+
+    .clear-btn {
+        background: #fef2f2;
+        border-color: #dc2626;
+        color: #dc2626;
+    }
+
+    .download-btn {
+        background: #f0f9ff;
+        border-color: #0369a1;
+        color: #0369a1;
+    }
+
+    .batch-size-select {
+        width: 180px !important;
+        padding: 8px 12px !important;
+        font-size: 14px !important;
+    }
+
+    .format-select {
+        width: 200px !important;
+        padding: 8px 12px !important;
+        font-size: 14px !important;
+    }
+
+   
+    .auto-select-notice {
+        background: #dbeafe;
+        border: 1px solid #2563eb;
+        color: #1e40af;
+        padding: 8px 15px;
+        border-radius: 8px;
+        font-size: 13px;
+        margin-top: 10px;
+        display: none;
+    }
+
+  
+    .folder-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .dp-code {
+        font-weight: 600;
+        color: #1e293b;
+        font-family: 'Courier New', monospace;
+    }
+
+    .status-badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: bold;
+        margin-left: 8px;
+    }
+
+    .badge-success {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-pending {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge-processing {
+        background: #dbeafe;
+        color: #1e40af;
+        animation: pulse 1.5s infinite;
+    }
+
+    @@keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.6; }
+        100% { opacity: 1; }
+    }
+
+    .conversion-date {
+        font-size: 12px;
+        color: #64748b;
+        margin-top: 4px;
+    }
+
+   
+    select {
+        padding: 12px;
+        width: 280px;
+        border-radius: 12px;
+        border: 1px solid #cbd5e1;
+    }
+
+    .controls-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .search-wrap input {
+        padding: 10px 16px;
+        width: 260px;
+        border-radius: 30px;
+        border: 1px solid #cbd5e1;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+    }
+
+    th {
+        background: linear-gradient(135deg,#2563eb,#1e40af);
+        color: white;
+        padding: 14px;
+        text-align: center;
+    }
+
+    td {
+        padding: 14px;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: center;
+    }
+
+    .convert-btn {
+        padding: 8px 22px;
+        border-radius: 30px;
+        border: none;
+        background: linear-gradient(135deg,#16a34a,#15803d);
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .bulk-btn {
+        background: linear-gradient(135deg,#7c3aed,#5b21b6);
+    }
+
+    .btn-disabled {
+        background: #cbd5e1 !important;
+        color: #64748b !important;
+        cursor: not-allowed;
+    }
+
+    .row-disabled {
+        background: #f1f5f9;
+        color: #94a3b8;
+        pointer-events: none;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: flex-end;
+        gap: 6px;
+        margin-top: 15px;
+    }
+
+    .pagination button {
+        padding: 6px 14px;
+        border-radius: 20px;
+        border: 1px solid #cbd5e1;
+        background: white;
+        cursor: pointer;
+    }
+
+    .pagination button.active {
+        background: #2563eb;
+        color: white;
+    }
+
+    .pagination button:disabled {
+        opacity: .5;
+        cursor: not-allowed;
+    }
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.9);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        display: none;
+    }
+
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #e2e8f0;
+        border-top: 5px solid #2563eb;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+    }
+
+    @@keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .report-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        display: none;
+    }
+
+    .report-content {
+        background: white;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 800px;
+        max-height: 80vh;
+        overflow: hidden;
+    }
+
+    .report-header {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        color: white;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .report-body {
+        padding: 20px;
+        overflow-y: auto;
+        max-height: 60vh;
+    }
+
+    .report-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .report-stat {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+    }
+
+    .report-stat-value {
+        font-size: 24px;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 5px;
+    }
+
+    .report-stat-label {
+        font-size: 14px;
+        color: #64748b;
+    }
+
+    .report-list {
+        margin-top: 20px;
+    }
+
+    .report-list-item {
+        padding: 10px 15px;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .report-actions {
+        padding: 15px 20px;
+        background: #f8fafc;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        border-top: 1px solid #e2e8f0;
+    }
+    .excel-btn {
+        background: linear-gradient(135deg, #16a34a, #15803d) !important;
+        color: white !important;
+        border: none !important;
+    }
+</style>
+
+<div class="gallery-wrapper">
+    <div class="gallery-header">📂 ACCOUNT IMAGE TO PDF CONVERTER</div>
+    <div style="text-align:center;margin-bottom:15px;">
+        <select id="categorySelect">
+            <option value="">-- Select Account Category --</option>
+            <option value="Railways">Railways</option>
+            <option value="Postal">Postal</option>
+            <option value="Telecom">Telecom</option>
+            <option value="StatePension">State Pension</option>
+            <option value="DefenceCivil">Defence Civil</option>
+        </select>
+    </div>
+    <div class="bulk-controls-section">
+        <div class="controls-grid">
+            <div class="control-group">
+                <label class="control-label">Search DP Codes</label>
+                <div class="search-wrap">
+                    <input type="text" id="searchBox" placeholder="Search DP Code..." />
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Batch Size</label>
+                <select id="batchSizeSelect" class="batch-size-select">
+                    <option value="auto">Auto-Select by Batch</option>
+                    <option value="50">50 per batch</option>
+                    <option value="100">100 per batch</option>
+                    <option value="500">500 per batch</option>
+                    <option value="1000">1000 per batch</option>
+                    <option value="all">All pending</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Conversion Format</label>
+                <select id="formatSelect" class="format-select">
+                    <option value="single">Single PDF per DP</option>
+                    <option value="combined">Combined PDF</option>
+                </select>
+            </div>
+        </div>
+
+       
+        <div id="autoSelectNotice" class="auto-select-notice">
+            <span id="noticeText"></span>
+            <button id="applyAutoSelect" class="action-btn" style="margin-left: 10px; padding: 3px 10px; font-size: 12px;">
+                Apply Auto-Select
+            </button>
+        </div>
+
+      
+        <div class="selection-summary">
+            <div class="summary-item">
+                <div class="summary-label">Total DP Codes</div>
+                <div class="summary-value total" id="totalCount">0</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Selected</div>
+                <div class="summary-value selected" id="selectedCount">0</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Converted</div>
+                <div class="summary-value converted" id="convertedCount">0</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Pending</div>
+                <div class="summary-value pending" id="pendingCount">0</div>
+            </div>
+        </div>
+
+       
+        <div class="bulk-actions">
+            <button id="btnSelectAll" class="action-btn select-btn">
+                <span>✓</span> Select All Pending
+            </button>
+            <button id="btnSelectNone" class="action-btn clear-btn">
+                <span>✕</span> Clear All
+            </button>
+            <button id="btnSelectPending" class="action-btn select-btn">
+                <span>⏳</span> Select Pending Only
+            </button>
+            <button id="btnDownloadReport" class="action-btn download-btn" style="margin-left: auto;">
+                <span>📊</span> Download Excel Report
+            </button>
+        </div>
+    </div>
+
+  
+    <div class="controls-bar">
+        <div></div> 
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span id="batchInfo" style="font-size: 14px; color: #475569;">Batch: Auto-Select</span>
+            <button id="btnConvertAll" class="convert-btn bulk-btn">
+                Convert Selected
+                <span id="selectedBadge" style="background: white; color: #7c3aed; padding: 2px 8px; border-radius: 10px; margin-left: 8px; font-size: 12px;">0</span>
+            </button>
+        </div>
+    </div>
+
+   
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="selectAllCheckbox" style="width: 16px; height: 16px;">
+                        DP Folder
+                    </div>
+                </th>
+                <th>Status</th>
+                <th>Conversion Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="dpBody">
+          
+        </tbody>
+    </table>
+
+    
+    <div class="pagination" id="pagination"></div>
+</div>
+
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div style="font-size: 16px; color: #334155; margin-top: 15px;">
+        <span id="loadingText">Processing...</span>
+        <br>
+        <small id="progressText" style="color: #64748b;"></small>
+    </div>
+</div>
+
+
+<div class="report-modal" id="reportModal">
+    <div class="report-content">
+        <div class="report-header">
+            <h3 style="margin: 0; font-size: 20px;">📊 Conversion Report</h3>
+            <button id="closeReport" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">×</button>
+        </div>
+        <div class="report-body" id="reportBody">
+           
+        </div>
+        <div class="report-actions">
+            <button id="closeReportBtn" class="action-btn" style="background: #64748b; color: white; border: none;">
+                Close
+            </button>
+            <button id="downloadExcelBtn" class="action-btn excel-btn">
+                <span>📥</span> Download Excel
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    
+    let allRows = [];
+    let rowsPerPage = 50;
+    let currentPage = 1;
+    let selectedDpCodes = new Set();
+    let conversionHistory = {};
+    let currentBatchSize = 'auto';
+    let conversionFormat = 'single';
+    let autoSelectQueue = []; 
+
+    
+    $(document).ready(function() {
+        
+        updateBatchInfo();
+
+       
+        $('#batchSizeSelect').change(function() {
+            currentBatchSize = $(this).val();
+            updateBatchInfo();
+
+           
+            if (currentBatchSize === 'auto') {
+                showAutoSelectNotice();
+            } else {
+                hideAutoSelectNotice();
+            }
+        });
+
+        $('#formatSelect').change(function() {
+            conversionFormat = $(this).val();
+        });
+
+    
+        $('#applyAutoSelect').click(function() {
+            applyAutoSelection();
+        });
+
+        $('#btnSelectAll').click(selectAllPending);
+        $('#btnSelectNone').click(clearAllSelection);
+        $('#btnSelectPending').click(selectPendingOnly);
+        $('#btnDownloadReport').click(showReport);
+        $('#selectAllCheckbox').change(function() {
+            const isChecked = $(this).is(':checked');
+            $('.dp-check:not(:disabled)').prop('checked', isChecked);
+
+            if (isChecked) {
+                $('.dp-check:not(:disabled)').each(function() {
+                    const dpCode = $(this).data('dp');
+                    selectedDpCodes.add(dpCode);
+                });
+            } else {
+                selectedDpCodes.clear();
+            }
+
+            updateSelectionSummary();
+        });
+        $('#closeReport').click(hideReport);
+        $('#closeReportBtn').click(hideReport);
+        $('#downloadExcelBtn').click(downloadExcelReport);
+        hideAutoSelectNotice();
+    });
+
+   
+    function showAutoSelectNotice() {
+        const pendingCount = $('#pendingCount').text();
+        $('#noticeText').html(`<strong>Auto-Select Mode:</strong> System will automatically select DP codes in batches.`);
+        $('#autoSelectNotice').show();
+    }
+
+    function hideAutoSelectNotice() {
+        $('#autoSelectNotice').hide();
+    }
+
+    function applyAutoSelection() {
+        if (allRows.length === 0) {
+            Swal.fire("No Data", "Please select a category first", "warning");
+            return;
+        }
+
+       
+        clearAllSelection(); 
+        const pendingDps = allRows.filter(dp => dp.conversionStatus === 'pending');
+
+        if (pendingDps.length === 0) {
+            Swal.fire("No Pending Files", "All DP codes are already converted", "info");
+            return;
+        }
+        let batchSize;
+        if (currentBatchSize === 'auto') {
+            
+            if (pendingDps.length <= 50) {
+                batchSize = pendingDps.length; 
+            } else if (pendingDps.length <= 200) {
+                batchSize = 50; 
+            } else if (pendingDps.length <= 500) {
+                batchSize = 100;
+            } else {
+                batchSize = 200; 
+            }
+        } else if (currentBatchSize === 'all') {
+            batchSize = pendingDps.length;
+        } else {
+            batchSize = parseInt(currentBatchSize);
+        }
+
+        
+        batchSize = Math.min(batchSize, pendingDps.length);
+
+        
+        let selectedCount = 0;
+        for (let i = 0; i < pendingDps.length && selectedCount < batchSize; i++) {
+            const dp = pendingDps[i];
+            dp.isSelected = true;
+            selectedDpCodes.add(dp.DpCode);
+            selectedCount++;
+        }
+
+       
+        $('#noticeText').html(`<strong>Auto-Selected:</strong> ${selectedCount} pending DP codes (first ${batchSize} items)`);
+
+       
+        renderTable();
+        updateSelectionSummary();
+
+       
+        Swal.fire("Auto-Select Applied", `${selectedCount} DP codes have been automatically selected`, "success");
+    }
+
+   
+    function downloadExcelReport() {
+        if (allRows.length === 0) {
+            Swal.fire("No Data", "No DP codes available for report", "warning");
+            return;
+        }
+
+        showLoading("Generating Excel Report...");
+        const excelData = [];
+        excelData.push([
+            'DP Code',
+            'Category',
+            'Status',
+            'Conversion Date',
+            'Conversion Format',
+            //'Success',
+            //'Error Message',
+            //'Batch Number'
+        ]);
+        allRows.forEach(dp => {
+            const history = conversionHistory[dp.DpCode] || {};
+
+            excelData.push([
+                dp.DpCode,
+                $('#categorySelect').val() || 'Unknown',
+                dp.conversionStatus || 'pending',
+                dp.conversionDate || '--',
+                history.format || '--',
+               // history.success ? 'Yes' : 'No',
+               // history.error || '--',
+               // history.batch || '--'
+            ]);
+        });
+
+       
+        excelData.push([]); 
+        excelData.push(['SUMMARY', '', '', '', '', '', '', '']);
+        excelData.push(['Total DP Codes', allRows.length, '', '', '', '', '', '']);
+        excelData.push(['Converted', allRows.filter(dp => dp.conversionStatus === 'converted').length, '', '', '', '', '', '']);
+        excelData.push(['Pending', allRows.filter(dp => dp.conversionStatus === 'pending').length, '', '', '', '', '', '']);
+        excelData.push(['Processing', allRows.filter(dp => dp.conversionStatus === 'processing').length, '', '', '', '', '', '']);
+
+       
+        excelData.push([]); 
+        excelData.push(['CONVERSION HISTORY SUMMARY', '', '', '', '', '', '', '']);
+
+        const failedConversions = Object.entries(conversionHistory).filter(([_, record]) => !record.success);
+        if (failedConversions.length > 0) {
+            excelData.push(['Failed Conversions', failedConversions.length, '', '', '', '', '', '']);
+            failedConversions.forEach(([dpCode, record], index) => {
+                excelData.push([
+                    `Failed ${index + 1}`,
+                    dpCode,
+                    '',
+                    new Date(record.date).toLocaleDateString(),
+                    record.format || '--',
+                    'No',
+                    record.error || 'Unknown error',
+                    record.batch || '--'
+                ]);
+            });
+        }
+
+       
+        const ws = XLSX.utils.aoa_to_sheet(excelData);
+
+      //===========================================================//
+        const wscols = [
+            { wch: 15 }, // DP Code
+            { wch: 15 }, // Category
+            { wch: 12 }, // Status
+            { wch: 15 }, // Conversion Date
+            { wch: 18 }, // Conversion Format
+            //{ wch: 10 }, // Success
+            //{ wch: 25 }, // Error Message
+           // { wch: 12 }  // Batch Number
+        ];
+     //===========================================================//
+        ws['!cols'] = wscols;
+
+       
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Conversion Report");
+        const category = $('#categorySelect').val() || 'All';
+        const date = new Date().toISOString().split('T')[0];
+        const filename = `Conversion_Report_${category}_${date}.xlsx`;
+        XLSX.writeFile(wb, filename);
+
+        hideLoading();
+        hideReport();
+
+        Swal.fire({
+            title: "Excel Report Downloaded!",
+            html: `
+                <div style="text-align: left; margin: 15px 0;">
+                    <p><strong>Report Details:</strong></p>
+                    <p>• File: ${filename}</p>
+                    <p>• Total Records: ${allRows.length}</p>
+                    <p>• Sheets: 1 (Conversion Report)</p>
+                    <p>• Generated: ${new Date().toLocaleString()}</p>
+                </div>
+            `,
+            icon: "success",
+            confirmButtonText: "Open Folder",
+            showCancelButton: true,
+            cancelButtonText: "Close"
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                Swal.fire("Info", "Check your downloads folder for the Excel file", "info");
+            }
+        });
+    }
+    $("#categorySelect").change(function () {
+        debugger;
+        let category = $(this).val();
+        if (!category) return;
+
+        $.post('@Url.Action("GetDpCodes","Gallery")',
+            { category: category },
+            function (data) {
+                allRows = data;
+               
+                allRows.forEach(row => {
+                    row.isSelected = false;
+                    row.conversionStatus = row.IsConverted ? 'converted' : 'pending';
+                    row.conversionDate = row.IsConverted ? new Date().toLocaleDateString() : null;
+                });
+                currentPage = 1;
+                renderTable();
+                updateSelectionSummary();
+                if (currentBatchSize === 'auto') {
+                    showAutoSelectNotice();
+                }
+            });
+    });
+
+    $("#searchBox").keyup(function () {
+        currentPage = 1;
+        renderTable();
+    });
+
+    function renderTable() {
+        let search = $("#searchBox").val().toLowerCase();
+        let filtered = allRows.filter(x => x.DpCode.toLowerCase().includes(search));
+
+        let start = (currentPage - 1) * rowsPerPage;
+        let pageRows = filtered.slice(start, start + rowsPerPage);
+
+        let html = "";
+        pageRows.forEach(dp => {
+            const isConverted = dp.conversionStatus === 'converted';
+            const isProcessing = dp.conversionStatus === 'processing';
+            const isSelected = dp.isSelected || selectedDpCodes.has(dp.DpCode);
+
+            html += `
+            <tr class="${isConverted ? 'row-disabled' : ''}">
+                <td style="text-align:left;padding-left:20px;">
+                    <div class="folder-info">
+                        <input type="checkbox" class="dp-check"
+                            data-dp="${dp.DpCode}"
+                            ${isSelected ? 'checked' : ''}
+                            ${isConverted ? 'disabled' : ''}>
+                        📁 <strong class="dp-code">${dp.DpCode}</strong>
+                        ${isConverted
+                            ? '<span class="status-badge badge-success">✓ Converted</span>'
+                            : isProcessing
+                                ? '<span class="status-badge badge-processing">⏳ Processing</span>'
+                                : '<span class="status-badge badge-pending">⏳ Pending</span>'}
+                    </div>
+                    ${dp.conversionDate ? `<div class="conversion-date">Converted: ${dp.conversionDate}</div>` : ''}
+                </td>
+                <td>
+                    ${isConverted ? 'Converted' : isProcessing ? 'Processing' : 'Pending'}
+                </td>
+                <td>
+                    ${dp.conversionDate || '--'}
+                </td>
+                <td>
+                    ${isConverted
+                        ? '<button class="convert-btn btn-disabled">Completed</button>'
+                        : `<button class="convert-btn btn-single" data-dp="${dp.DpCode}">Convert PDF</button>`}
+                </td>
+            </tr>`;
+        });
+
+        $("#dpBody").html(html);
+        renderPagination(filtered.length);
+        updateSelectAllCheckbox();
+        $('.dp-check').off('change').on('change', function() {
+            const dpCode = $(this).data('dp');
+            const isChecked = $(this).is(':checked');
+            const dp = allRows.find(x => x.DpCode === dpCode);
+
+            if (dp && dp.conversionStatus !== 'converted') {
+                dp.isSelected = isChecked;
+                if (isChecked) {
+                    selectedDpCodes.add(dpCode);
+                } else {
+                    selectedDpCodes.delete(dpCode);
+                }
+                updateSelectionSummary();
+            }
+        });
+
+        $('.btn-single').off('click').on('click', function() {
+            const dpCode = $(this).data('dp');
+            convertSingle(dpCode);
+        });
+    }
+
+    function renderPagination(totalRows) {
+        let totalPages = Math.ceil(totalRows / rowsPerPage);
+        let html = "";
+
+        html += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="gotoPage(${currentPage - 1})">Previous</button>`;
+
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<button class="${i === currentPage ? 'active' : ''}" onclick="gotoPage(${i})">${i}</button>`;
+        }
+
+        html += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="gotoPage(${currentPage + 1})">Next</button>`;
+
+        $("#pagination").html(html);
+    }
+
+    function gotoPage(p) {
+        currentPage = p;
+        renderTable();
+    }
+    $(document).on("change", ".dp-check", function () {
+        updateSelectionSummary();
+    });
+
+ 
+    $("#btnConvertAll").click(function () {
+        let selected = $(".dp-check:checked:not(:disabled)")
+            .map(function () { return $(this).data("dp"); })
+            .get();
+
+        if (selected.length === 0) {
+            Swal.fire("Warning", "Select at least one DP Code", "warning");
+            return;
+        }
+        const batchSize = currentBatchSize === 'all' ? selected.length :
+                         currentBatchSize === 'auto' ? selected.length :
+                         parseInt(currentBatchSize);
+
+        Swal.fire({
+            title: "Confirm Conversion",
+            html: `
+                <div style="text-align: left; margin: 15px 0;">
+                    <p><strong>Conversion Details:</strong></p>
+                    <p>• Total DP Codes: ${selected.length}</p>
+                    <p>• Batch Size: ${batchSize} per batch</p>
+                    <p>• Format: ${conversionFormat === 'single' ? 'Single PDF per DP' : 'Combined PDF'}</p>
+                    <p>• Estimated batches: ${Math.ceil(selected.length / batchSize)}</p>
+                </div>
+            `,
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonText: "Start Conversion",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                startBulkConversion(selected, batchSize);
+            }
+        });
+    });
+
+    function updateBatchInfo() {
+        let batchText;
+        if (currentBatchSize === 'auto') {
+            batchText = 'Batch: Auto-Select';
+        } else if (currentBatchSize === 'all') {
+            batchText = 'Batch: All Selected';
+        } else {
+            batchText = `Batch: ${currentBatchSize}`;
+        }
+        $('#batchInfo').text(batchText);
+    }
+
+    function updateSelectionSummary() {
+        const total = allRows.length;
+        const selected = $('.dp-check:checked:not(:disabled)').length;
+        const converted = allRows.filter(dp => dp.conversionStatus === 'converted').length;
+        const pending = total - converted;
+
+        $('#totalCount').text(total);
+        $('#selectedCount').text(selected);
+        $('#convertedCount').text(converted);
+        $('#pendingCount').text(pending);
+        $('#selectedBadge').text(selected);
+
+       
+        $('#btnConvertAll').prop('disabled', selected === 0);
+        if (selected === 0) {
+            $('#btnConvertAll').addClass('btn-disabled');
+        } else {
+            $('#btnConvertAll').removeClass('btn-disabled');
+        }
+
+        $('#btnDownloadReport').prop('disabled', allRows.length === 0);
+    }
+
+    function updateSelectAllCheckbox() {
+        const visibleCheckboxes = $('.dp-check:not(:disabled)');
+        const checkedCount = $('.dp-check:not(:disabled):checked').length;
+
+        if (visibleCheckboxes.length === 0) {
+            $('#selectAllCheckbox').prop('checked', false);
+            $('#selectAllCheckbox').prop('indeterminate', false);
+        } else {
+            $('#selectAllCheckbox').prop('checked', checkedCount === visibleCheckboxes.length);
+            $('#selectAllCheckbox').prop('indeterminate', checkedCount > 0 && checkedCount < visibleCheckboxes.length);
+        }
+    }
+
+    function selectAllPending() {
+        $('.dp-check:not(:disabled)').prop('checked', true);
+        $('.dp-check:not(:disabled)').each(function() {
+            const dpCode = $(this).data('dp');
+            selectedDpCodes.add(dpCode);
+            const dp = allRows.find(x => x.DpCode === dpCode);
+            if (dp) dp.isSelected = true;
+        });
+        updateSelectionSummary();
+        Swal.fire("Selection Updated", "All pending DP codes have been selected", "success");
+    }
+
+    function clearAllSelection() {
+        $('.dp-check').prop('checked', false);
+        selectedDpCodes.clear();
+        allRows.forEach(dp => dp.isSelected = false);
+        updateSelectionSummary();
+        Swal.fire("Selection Cleared", "All selections have been cleared", "info");
+    }
+
+    function selectPendingOnly() {
+        clearAllSelection();
+        selectAllPending();
+    }
+
+    function showLoading(message, progressMessage = '') {
+        $('#loadingText').text(message);
+        $('#progressText').text(progressMessage);
+        $('#loadingOverlay').show();
+    }
+
+    function hideLoading() {
+        $('#loadingOverlay').hide();
+    }
+
+    async function startBulkConversion(selectedDps, batchSize) {
+        showLoading('Starting bulk conversion...', `Processing ${selectedDps.length} DP codes`);
+
+        const batches = [];
+        for (let i = 0; i < selectedDps.length; i += batchSize) {
+            batches.push(selectedDps.slice(i, i + batchSize));
+        }
+
+        let successCount = 0;
+        let failCount = 0;
+        const failedDps = [];
+
+        for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+            const batch = batches[batchIndex];
+
+           
+            showLoading(
+                `Processing batch ${batchIndex + 1}/${batches.length}`,
+                `Progress: ${successCount + failCount}/${selectedDps.length} files`
+            );
+
+           
+            batch.forEach(dpCode => {
+                const dp = allRows.find(x => x.DpCode === dpCode);
+                if (dp) dp.conversionStatus = 'processing';
+            });
+            renderTable();
+
+            try {
+               
+                const response = await $.ajax({
+                    url: '@Url.Action("ConvertMultipleDpToPdf","Gallery")',
+                    type: "POST",
+                    traditional: true,
+                    data: {
+                        category: $("#categorySelect").val(),
+                        dpCodes: batch,
+                        format: conversionFormat
+                    }
+                });
+
+                if (response.success) {
+                  
+                    batch.forEach(dpCode => {
+                        const dp = allRows.find(x => x.DpCode === dpCode);
+                        if (dp) {
+                            dp.conversionStatus = 'converted';
+                            dp.conversionDate = new Date().toLocaleDateString();
+                            dp.isSelected = false;
+                            selectedDpCodes.delete(dpCode);
+                            successCount++;
+
+                            
+                            conversionHistory[dpCode] = {
+                                date: new Date().toISOString(),
+                                format: conversionFormat,
+                                success: true,
+                                batch: batchIndex + 1
+                            };
+                        }
+                    });
+                } else {
+                    
+                    batch.forEach(dpCode => {
+                        const dp = allRows.find(x => x.DpCode === dpCode);
+                        if (dp) {
+                            dp.conversionStatus = 'pending';
+                            failCount++;
+                            failedDps.push({ dpCode, error: response.message });
+
+                            conversionHistory[dpCode] = {
+                                date: new Date().toISOString(),
+                                format: conversionFormat,
+                                success: false,
+                                error: response.message,
+                                batch: batchIndex + 1
+                            };
+                        }
+                    });
+                }
+            } catch (error) {
+              
+                batch.forEach(dpCode => {
+                    const dp = allRows.find(x => x.DpCode === dpCode);
+                    if (dp) {
+                        dp.conversionStatus = 'pending';
+                        failCount++;
+                        failedDps.push({ dpCode, error: 'Network error' });
+                    }
+                });
+            }
+
+          
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        hideLoading();
+        renderTable();
+        updateSelectionSummary();
+        if (failCount === 0) {
+            Swal.fire({
+                title: "Success!",
+                html: `
+                    <div style="text-align: left; margin: 15px 0;">
+                        <p><strong>Conversion completed successfully!</strong></p>
+                        <p>• Total processed: ${selectedDps.length}</p>
+                        <p>• Successful: ${successCount}</p>
+                        <p>• Failed: ${failCount}</p>
+                        <p>• Format: ${conversionFormat === 'single' ? 'Single PDF per DP' : 'Combined PDF'}</p>
+                    </div>
+                `,
+                icon: "success"
+            });
+        } else {
+            Swal.fire({
+                title: "Conversion Results",
+                html: `
+                    <div style="text-align: left; margin: 15px 0;">
+                        <p><strong>Conversion completed with some errors:</strong></p>
+                        <p>• Total processed: ${selectedDps.length}</p>
+                        <p>• Successful: ${successCount}</p>
+                        <p>• Failed: ${failCount}</p>
+                        <p>• Check the report for failed conversions</p>
+                    </div>
+                `,
+                icon: "warning"
+            });
+        }
+    }
+
+    async function convertSingle(dpCode) {
+        const dp = allRows.find(x => x.DpCode === dpCode);
+        if (!dp || dp.conversionStatus === 'converted') return;
+
+        showLoading(`Converting ${dpCode}...`);
+        dp.conversionStatus = 'processing';
+        renderTable();
+
+        try {
+            const response = await $.ajax({
+                url: '@Url.Action("ConvertMultipleDpToPdf","Gallery")',
+                type: "POST",
+                traditional: true,
+                data: {
+                    category: $("#categorySelect").val(),
+                    dpCodes: [dpCode],
+                    format: 'single'
+                }
+            });
+
+            if (response.success) {
+                dp.conversionStatus = 'converted';
+                dp.conversionDate = new Date().toLocaleDateString();
+                dp.isSelected = false;
+                selectedDpCodes.delete(dpCode);
+
+                conversionHistory[dpCode] = {
+                    date: new Date().toISOString(),
+                    format: 'single',
+                    success: true
+                };
+
+                renderTable();
+                updateSelectionSummary();
+
+                Swal.fire("Success", `${dpCode} converted successfully!`, "success");
+            } else {
+                dp.conversionStatus = 'pending';
+                renderTable();
+
+                Swal.fire("Error", `Failed to convert ${dpCode}: ${response.message}`, "error");
+            }
+        } catch (error) {
+            dp.conversionStatus = 'pending';
+            renderTable();
+
+            Swal.fire("Error", `Network error while converting ${dpCode}`, "error");
+        } finally {
+            hideLoading();
+        }
+    }
+
+    function showReport() {
+        const convertedDps = allRows.filter(dp => dp.conversionStatus === 'converted');
+        const pendingDps = allRows.filter(dp => dp.conversionStatus === 'pending');
+        const processingDps = allRows.filter(dp => dp.conversionStatus === 'processing');
+        const failedDps = Object.entries(conversionHistory)
+            .filter(([_, record]) => !record.success)
+            .map(([dpCode, record]) => ({ dpCode, ...record }));
+
+        let reportHtml = `
+            <div class="report-stats">
+                <div class="report-stat">
+                    <div class="report-stat-value">${allRows.length}</div>
+                    <div class="report-stat-label">Total DP Codes</div>
+                </div>
+                <div class="report-stat">
+                    <div class="report-stat-value">${convertedDps.length}</div>
+                    <div class="report-stat-label">Converted</div>
+                </div>
+                <div class="report-stat">
+                    <div class="report-stat-value">${pendingDps.length}</div>
+                    <div class="report-stat-label">Pending</div>
+                </div>
+                <div class="report-stat">
+                    <div class="report-stat-value">${processingDps.length}</div>
+                    <div class="report-stat-label">Processing</div>
+                </div>
+            </div>
+            <div class="report-list">
+                <h4>Conversion Summary</h4>
+                <div class="report-list-item">
+                    <span>Total Conversion History Records</span>
+                    <span>${Object.keys(conversionHistory).length}</span>
+                </div>
+                <div class="report-list-item">
+                    <span>Failed Conversions</span>
+                    <span style="color: #dc2626;">${failedDps.length}</span>
+                </div>
+                <div class="report-list-item">
+                    <span>Last Conversion Date</span>
+                    <span>${convertedDps.length > 0 ? convertedDps[convertedDps.length-1].conversionDate : 'N/A'}</span>
+                </div>
+            </div>`;
+
+        if (failedDps.length > 0) {
+            reportHtml += `
+                <div class="report-list">
+                    <h4 style="color: #dc2626;">Recent Failed Conversions</h4>`;
+
+            failedDps.slice(0, 5).forEach(fail => {
+                reportHtml += `
+                    <div class="report-list-item">
+                        <span>${fail.dpCode}</span>
+                        <span style="color: #dc2626; font-size: 12px;">${fail.error || 'Unknown error'}</span>
+                    </div>`;
+            });
+
+            if (failedDps.length > 5) {
+                reportHtml += `
+                    <div class="report-list-item" style="text-align: center; color: #64748b;">
+                        ... and ${failedDps.length - 5} more failed conversions
+                    </div>`;
+            }
+
+            reportHtml += `</div>`;
+        }
+
+        reportHtml += `
+            <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 10px; border: 1px solid #bae6fd;">
+                <p style="margin: 0; color: #0369a1; font-size: 14px;">
+                    <strong>Note:</strong> Click "Download Excel" to get complete report with all details including DP codes, status, dates, and error messages.
+                </p>
+            </div>`;
+
+        $('#reportBody').html(reportHtml);
+        $('#reportModal').show();
+    }
+
+    function hideReport() {
+        $('#reportModal').hide();
+    }
+</script>

@@ -829,6 +829,7 @@ namespace PENISON_MANAGEMENT_SYSTEM.Controllers
         new { Text = "Telecom", Value = "T" },
         new { Text = "Civil", Value = "C" },
         new { Text = "Postal", Value = "P" },
+         new { Text = "Defence", Value = "D" },
         new { Text = "Other State", Value = "S" }
             }, "Value", "Text", selectedValue);
         }

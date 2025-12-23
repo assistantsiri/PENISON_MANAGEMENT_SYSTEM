@@ -22,6 +22,8 @@ namespace PENISON_MANAGEMENT_SYSTEM.Models
         public string SearchText { get; set; }
         public int Page { get; set; }
         public int TotalPages { get; set; }
+        public List<string> DpCodes { get; set; }
+        public string SelectedDpCode { get; set; }
 
         public List<ImageData> Images { get; set; }
     }

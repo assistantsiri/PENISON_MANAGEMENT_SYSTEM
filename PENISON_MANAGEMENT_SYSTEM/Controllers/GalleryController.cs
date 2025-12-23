@@ -1,4 +1,7 @@
-﻿using PENISON_MANAGEMENT_SYSTEM.Models;
+﻿using iTextSharp.text;
+using iTextSharp.text.pdf;
+using PENISON_MANAGEMENT_SYSTEM.DA;
+using PENISON_MANAGEMENT_SYSTEM.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -172,148 +175,225 @@ namespace PENISON_MANAGEMENT_SYSTEM.Controllers
             string fileName = Path.GetFileName(path);
             return File(fileBytes, "application/octet-stream", fileName);
         }
-        public ActionResult GetCategoryWiseImage(string category, string dpCode = null)
+
+        public ActionResult CCPCVIEW()
         {
-            var model = new GalleryViewModel
-            {
-                SelectedCategory = category,
-                SelectedDpCode = dpCode,
-                DpCodes = new List<string>(),
-                Images = new List<ImageData>()
-            };
+            return View();
+        }
 
-            if (!string.IsNullOrEmpty(category))
-            {
-                string key = "imagefilepaths" + category.ToLower();
-                string rootPath = ConfigurationManager.AppSettings[key];
+        public ActionResult CPPCVIEW()
+        {
+            return View();
+        }
+        [HttpPost]
+        public JsonResult GetDpCodes(string category)
+        {
+            var dpCodes = GetDpCodesByCategory(category);
+            var repo = new Repository();
 
-                if (Directory.Exists(rootPath))
+            var result = new List<object>();
+
+            foreach (var dp in dpCodes)
+            {
+                string dpFolder = $@"D:\{category}\{dp}";
+                bool isConverted = false;
+
+                if (Directory.Exists(dpFolder))
                 {
-                    // STEP 1: Load DP folders
-                    model.DpCodes = Directory.GetDirectories(rootPath)
-                                             .Select(Path.GetFileName)
-                                             .OrderBy(x => x)
-                                             .ToList();
-
-                    // STEP 2: Load images ONLY after DP selected
-                    if (!string.IsNullOrEmpty(dpCode))
-                    {
-                        string dpPath = Path.Combine(rootPath, dpCode);
-
-                        if (Directory.Exists(dpPath))
+                    var folderAccounts = Directory.GetFiles(dpFolder)
+                        .Select(f =>
                         {
-                            var files = Directory.GetFiles(dpPath, "*.jpg");
+                            string name = Path.GetFileNameWithoutExtension(f);
+                            char[] split = { '_', '-', ',', '\'', '.' };
+                            return name.Split(split, StringSplitOptions.RemoveEmptyEntries)[0]
+                                       .Trim()
+                                       .ToUpper();
+                        })
+                        .Distinct()
+                        .ToList();
 
-                            foreach (var f in files)
-                            {
-                                model.Images.Add(new ImageData
-                                {
-                                    FileName = Path.GetFileName(f),
-                                    FullPath = f.Replace("\\", "/"),
-                                    DpCode = dpCode
-                                });
-                            }
-                        }
+                    var dbAccounts = repo.GetConvertedAccounts(category, dp);
+
+                   
+                    if (folderAccounts.Count > 0 &&
+                        folderAccounts.All(a => dbAccounts.Contains(a)))
+                    {
+                        isConverted = true;
                     }
                 }
+
+                result.Add(new
+                {
+                    DpCode = dp,
+                    IsConverted = isConverted
+                });
             }
 
-            return View(model);
+            return Json(result);
+        }
+
+        private List<string> GetDpCodesByCategory(string category)
+        {
+            var dpCodes = new List<string>();
+
+            try
+            {
+                string basePath = @"D:\";
+
+                string categoryPath = Path.Combine(basePath, category);
+
+                if (!Directory.Exists(categoryPath))
+                {
+                    return dpCodes;
+                }
+
+                dpCodes = Directory.GetDirectories(categoryPath)
+                                   .Select(dir => Path.GetFileName(dir))
+                                   .OrderBy(name => name)
+                                   .ToList();
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return dpCodes;
         }
 
         [HttpPost]
-        public ActionResult ConvertDpToPdf(string category, string dpCode)
+        public ActionResult ConvertMultipleDpToPdf(string category, List<string> dpCodes)
         {
-            if (string.IsNullOrEmpty(category) || string.IsNullOrEmpty(dpCode))
-                return RedirectToAction("Index");
-
-            // SOURCE IMAGE PATH
-            string key = "imagefilepaths" + category.ToLower();
-            string rootPath = ConfigurationManager.AppSettings[key];
-            string dpImagePath = Path.Combine(rootPath, dpCode);
-
-            if (!Directory.Exists(dpImagePath))
-                return RedirectToAction("Index", new { category });
-
-            var imageFiles = Directory.GetFiles(dpImagePath, "*.jpg");
-
-            if (imageFiles.Length == 0)
-                return RedirectToAction("Index", new { category, dpCode });
-
-            /* ========= TARGET PDF FOLDER ========= */
-
-            string dpPdfFolder = Path.Combine(Server.MapPath("~/UploadedPdfs"), dpCode);
-            if (!Directory.Exists(dpPdfFolder))
+            try
             {
-                Directory.CreateDirectory(dpPdfFolder);
-            }
-
-            string existingPdfPath = Path.Combine(dpPdfFolder, dpCode + ".pdf");
-            string newPdfPath = Path.Combine(dpPdfFolder, Guid.NewGuid().ToString() + ".pdf");
-
-            /* ========= CREATE PDF FROM JPG ========= */
-
-            using (var fs = new FileStream(newPdfPath, FileMode.Create, FileAccess.Write))
-            {
-                using (var doc = new iTextSharp.text.Document(iTextSharp.text.PageSize.A4))
+                foreach (var dpCode in dpCodes)
                 {
+                    
+                    ConvertDpInternal(dpCode, category);
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Selected DP folders converted successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        private void ConvertDpInternal(string dpCode, string category)
+        {
+            string sourceFolder = $@"D:\{category}\{dpCode}";
+            if (!Directory.Exists(sourceFolder)) return;
+
+            var images = Directory.GetFiles(sourceFolder)
+                .Where(f => f.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
+                         || f.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase)
+                         || f.EndsWith(".png", StringComparison.OrdinalIgnoreCase)
+                         || f.EndsWith(".jfif", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            if (!images.Any()) return;
+
+            string basePath = Server.MapPath("~/Uploadspdf");
+            Repository repo = new Repository();
+
+            var groupedImages = images.GroupBy(img =>
+            {
+                string name = Path.GetFileNameWithoutExtension(img);
+                char[] split = { '_', '-', ',', '\'', '.' };
+                return name.Split(split, StringSplitOptions.RemoveEmptyEntries)[0]
+                           .Trim()
+                           .ToUpper();
+            });
+
+            foreach (var group in groupedImages)
+            {
+                string accountNumber = group.Key;
+
+                string accountFolder = Path.Combine(basePath, accountNumber);
+                if (!Directory.Exists(accountFolder))
+                    Directory.CreateDirectory(accountFolder);
+
+                string existingPdfPath = Path.Combine(accountFolder, accountNumber + ".pdf");
+                string tempPdfPath = Path.Combine(accountFolder, Guid.NewGuid() + ".pdf");
+
+                
+                using (FileStream fs = new FileStream(tempPdfPath, FileMode.Create))
+                {
+                    Document doc = new Document(PageSize.A4, 10, 10, 10, 10);
                     PdfWriter.GetInstance(doc, fs);
                     doc.Open();
 
-                    foreach (var imgPath in imageFiles)
+                    foreach (var img in group)
                     {
-                        var img = iTextSharp.text.Image.GetInstance(imgPath);
-                        img.ScaleToFit(doc.PageSize.Width - 40, doc.PageSize.Height - 40);
-                        img.Alignment = Element.ALIGN_CENTER;
-                        doc.Add(img);
+                        var image = Image.GetInstance(img);
+                        image.ScaleToFit(PageSize.A4.Width - 20, PageSize.A4.Height - 20);
+                        image.Alignment = Element.ALIGN_CENTER;
+                        doc.Add(image);
                         doc.NewPage();
                     }
-
                     doc.Close();
                 }
+
+               
+                if (System.IO.File.Exists(existingPdfPath))
+                {
+                    string mergedPdfPath = Path.Combine(accountFolder, "merged_temp.pdf");
+
+                    MergePdfs(existingPdfPath, tempPdfPath, mergedPdfPath);
+
+                    System.IO.File.Delete(existingPdfPath);
+                    System.IO.File.Delete(tempPdfPath);
+                    System.IO.File.Move(mergedPdfPath, existingPdfPath);
+                }
+                else
+                {
+                    System.IO.File.Move(tempPdfPath, existingPdfPath);
+                }
+
+                
+                FileInfo fi = new FileInfo(existingPdfPath);
+                decimal sizeKB = Math.Round((decimal)fi.Length / 1024, 2);
+
+                repo.SavePdfDetails(
+                    dpCode,
+                    accountNumber,
+                    category,
+                    $"/{category}/{accountNumber}/{accountNumber}.pdf",
+                    sizeKB,
+                    User.Identity.Name
+                );
             }
-
-            /* ========= MERGE IF PDF EXISTS ========= */
-
-            if (System.IO.File.Exists(existingPdfPath))
-            {
-                string mergedPdfPath = Path.Combine(dpPdfFolder, "merged_temp.pdf");
-
-                MergePdfs(existingPdfPath, newPdfPath, mergedPdfPath);
-
-                System.IO.File.Delete(existingPdfPath);
-                System.IO.File.Delete(newPdfPath);
-
-                System.IO.File.Move(mergedPdfPath, existingPdfPath);
-            }
-            else
-            {
-                System.IO.File.Move(newPdfPath, existingPdfPath);
-            }
-
-            return File(existingPdfPath, "application/pdf", dpCode + ".pdf");
         }
-        private void MergePdfs(string pdf1, string pdf2, string outputPath)
+
+        private void MergePdfs(string existingPdf, string newPdf, string outputPdf)
         {
-            using (var stream = new FileStream(outputPath, FileMode.Create))
+            using (var stream = new FileStream(outputPdf, FileMode.Create))
             {
-                var document = new iTextSharp.text.Document();
-                var pdf = new PdfCopy(document, stream);
+                Document document = new Document();
+                PdfCopy pdf = new PdfCopy(document, stream);
                 document.Open();
 
-                foreach (string file in new[] { pdf1, pdf2 })
-                {
-                    var reader = new PdfReader(file);
-                    for (int i = 1; i <= reader.NumberOfPages; i++)
-                    {
-                        pdf.AddPage(pdf.GetImportedPage(reader, i));
-                    }
-                    reader.Close();
-                }
+                if (System.IO.File.Exists(existingPdf))
+                    AddPagesFromPdf(existingPdf, pdf);
+
+                AddPagesFromPdf(newPdf, pdf);
 
                 document.Close();
             }
         }
-
+        private void AddPagesFromPdf(string pdfPath, PdfCopy pdf)
+        {
+            using (PdfReader reader = new PdfReader(pdfPath))
+            {
+                for (int i = 1; i <= reader.NumberOfPages; i++)
+                {
+                    PdfImportedPage page = pdf.GetImportedPage(reader, i);
+                    pdf.AddPage(page);
+                }
+            }
+        }
     }
 }

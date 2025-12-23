@@ -1,0 +1,2481 @@
+﻿@model PENISON_MANAGEMENT_SYSTEM.Models.PensionClaimViewModel
+@{
+    ViewBag.Title = "Pension Claim Data Management";
+    //Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+    <style>
+        /** {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }*/
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            /*min-height: 100vh;
+            padding: 20px;*/
+        }
+
+        .container-wrapper {
+            max-width: 1600px;
+            /*margin: 30px auto;*/
+            background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
+            border-radius: 20px;
+           /* padding: 30px;*/
+           /* box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+                0 10px 60px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;*/
+        }
+
+        .container-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg,
+                #3498db 0%,
+                #9b59b6 25%,
+                #2ecc71 50%,
+                #e74c3c 75%,
+                #f39c12 100%);
+            z-index: 1;
+        }
+
+        .container-wrapper::after {
+            content: '';
+            position: absolute;
+           /* top: 20px;*/
+            right: 20px;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #3498db22, #2ecc7122);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .header {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            /*margin-bottom: 30px;*/
+            color: #2c3e50;
+            position: relative;
+           /* padding-bottom: 20px;*/
+            background: linear-gradient(135deg, #2c3e50, #4a6583);
+            -webkit-background-clip: text;
+           /* -webkit-text-fill-color: transparent;*/
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                #3498db 50%,
+                transparent 100%);
+            border-radius: 2px;
+        }
+/**/
+        /* Enhanced Path Navigation */
+        .path-navigation {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border: 1px solid #e0e6ed;
+            font-size: 14px;
+            color: #34495e;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .path-navigation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+        }
+
+        .path-navigation #currentPath {
+            color: #2980b9;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .empty-path {
+            color: #7f8c8d;
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        /* Enhanced Form Sections */
+        .form-section {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #e0e6ed;
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 12px 30px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f3f7;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+        }
+
+        .section-icon {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Enhanced Form Controls */
+        .folder-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .selector-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 12px;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .selector-label {
+            min-width: 120px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-radius: 8px;
+            border: 1px solid #e0e6ed;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+        }
+
+        .form-label-required::after {
+            content: ' *';
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        select, input[type="file"], input[type="text"] {
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 2px solid #e0e6ed;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            font-size: 15px;
+            color: #2c3e50;
+            width: 100%;
+            transition: all 0.3s ease;
+            flex: 1;
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.03),
+                inset 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        select:hover, input[type="file"]:hover, input[type="text"]:hover {
+            border-color: #3498db;
+            box-shadow:
+                0 4px 12px rgba(52, 152, 219, 0.1),
+                inset 0 1px 2px rgba(255, 255, 255, 0.9);
+        }
+
+        select:focus, input[type="file"]:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow:
+                0 0 0 3px rgba(52, 152, 219, 0.2),
+                0 4px 16px rgba(52, 152, 219, 0.15);
+            transform: translateY(-1px);
+        }
+
+        /* Enhanced Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 16px 28px;
+            border-radius: 12px;
+            border: none;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-width: 160px;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.1),
+                0 1px 0 rgba(255, 255, 255, 0.2) inset;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent);
+            transition: left 0.7s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.1) 0%,
+                transparent 50%,
+                rgba(0, 0, 0, 0.05) 100%);
+            border-radius: inherit;
+            z-index: 0;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            box-shadow:
+                0 6px 20px rgba(52, 152, 219, 0.4),
+                0 2px 0 rgba(41, 128, 185, 0.3) inset;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow:
+                0 10px 25px rgba(52, 152, 219, 0.5),
+                0 2px 0 rgba(41, 128, 185, 0.4) inset;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            box-shadow:
+                0 6px 20px rgba(46, 204, 113, 0.4),
+                0 2px 0 rgba(39, 174, 96, 0.3) inset;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow:
+                0 10px 25px rgba(46, 204, 113, 0.5),
+                0 2px 0 rgba(39, 174, 96, 0.4) inset;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            color: white;
+            box-shadow:
+                0 6px 20px rgba(149, 165, 166, 0.4),
+                0 2px 0 rgba(127, 140, 141, 0.3) inset;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #7f8c8d 0%, #95a5a6 100%);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow:
+                0 10px 25px rgba(149, 165, 166, 0.5),
+                0 2px 0 rgba(127, 140, 141, 0.4) inset;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            box-shadow:
+                0 6px 20px rgba(243, 156, 18, 0.4),
+                0 2px 0 rgba(230, 126, 34, 0.3) inset;
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow:
+                0 10px 25px rgba(243, 156, 18, 0.5),
+                0 2px 0 rgba(230, 126, 34, 0.4) inset;
+        }
+
+        .btn-disabled {
+            background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%) !important;
+            color: #7f8c8d !important;
+            cursor: not-allowed !important;
+            box-shadow: none !important;
+            transform: none !important;
+            opacity: 0.6;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+            border: 1px solid #e0e6ed;
+            box-shadow:
+                0 6px 20px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            animation: slideInDown 0.5s ease-out;
+        }
+
+        @@keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding-left: 50px;
+            background: linear-gradient(135deg, #ffffff, #fafbfc);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #3498db;
+            font-size: 18px;
+            z-index: 2;
+        }
+
+        /* Files Section */
+        .files-section {
+            margin-top: 30px;
+            display: none;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @@keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .files-section.visible {
+            display: block;
+        }
+
+        .files-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f3f7;
+            position: relative;
+        }
+
+        .files-header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+        }
+
+        .files-count {
+            font-size: 14px;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #e0e6ed;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Enhanced Files Table */
+        .files-table-container {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, 0.06),
+                0 1px 0 rgba(255, 255, 255, 0.8) inset;
+            border: 1px solid #e0e6ed;
+            margin-bottom: 25px;
+        }
+
+        .files-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .files-table thead {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            position: relative;
+        }
+
+        .files-table thead::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent);
+        }
+
+        .files-table th {
+            padding: 18px 20px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .files-table th:last-child {
+            border-right: none;
+        }
+
+        .files-table tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #f0f3f7;
+            background: linear-gradient(135deg, #ffffff, #fafbfc);
+        }
+
+        .files-table tbody tr:hover {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            transform: translateX(8px);
+            box-shadow:
+                0 6px 20px rgba(0, 0, 0, 0.08),
+                0 2px 8px rgba(52, 152, 219, 0.1);
+            z-index: 1;
+            position: relative;
+        }
+
+        .files-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .files-table td {
+            padding: 16px 20px;
+            color: #495057;
+            font-size: 14px;
+            vertical-align: middle;
+            border-right: 1px solid #f0f3f7;
+        }
+
+        .files-table td:last-child {
+            border-right: none;
+        }
+
+        .file-icon {
+            margin-right: 12px;
+            vertical-align: middle;
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #2c3e50;
+            word-break: break-word;
+            position: relative;
+            padding-left: 5px;
+        }
+
+        .file-name::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 16px;
+            background: linear-gradient(180deg, #3498db, #2ecc71);
+            border-radius: 2px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .files-table tbody tr:hover .file-name::before {
+            opacity: 1;
+        }
+
+        .file-type {
+            background: linear-gradient(135deg, #ecf0f1, #f5f7fa);
+            color: #495057;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            border: 1px solid #dfe6e9;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .file-size {
+            color: #7f8c8d;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .file-date {
+            color: #636e72;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .action-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent);
+            transition: left 0.5s ease;
+        }
+
+        .action-icon:hover::before {
+            left: 100%;
+        }
+
+        .view-btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+
+        .view-btn:hover {
+            background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+            transform: translateY(-2px) scale(1.1);
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            transform: translateY(-2px) scale(1.1);
+            box-shadow: 0 6px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .delete-btn:hover {
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+            transform: translateY(-2px) scale(1.1);
+            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 15px;
+            border: 1px solid #e0e6ed;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .pagination-btn {
+            padding: 10px 16px;
+            border: 2px solid #3498db;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            color: #3498db;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            min-width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pagination-btn:hover {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .pagination-btn.active {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            font-weight: bold;
+            box-shadow:
+                0 4px 12px rgba(52, 152, 219, 0.3),
+                0 1px 0 rgba(41, 128, 185, 0.2) inset;
+        }
+
+        .pagination-info {
+            color: #7f8c8d;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 0 15px;
+            padding: 8px 15px;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-radius: 10px;
+            border: 1px solid #e0e6ed;
+        }
+
+        /* Custom Modal (SweetAlert Alternative) */
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .custom-modal.active {
+            display: flex;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @@keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                backdrop-filter: blur(0px);
+            }
+            to {
+                opacity: 1;
+                backdrop-filter: blur(5px);
+            }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            overflow: hidden;
+            box-shadow:
+                0 30px 60px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
+        }
+
+        @@keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .modal-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+        }
+
+        .modal-body {
+            padding: 30px 25px;
+            color: #2c3e50;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-top: 1px solid #e0e6ed;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 6px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 12px;
+            padding: 18px 20px;
+            min-width: 300px;
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.15),
+                0 1px 0 rgba(255, 255, 255, 0.8) inset;
+            border-left: 4px solid;
+            transform: translateX(100%);
+            opacity: 0;
+            animation: toastSlideIn 0.4s ease-out forwards;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid #e0e6ed;
+        }
+
+        @@keyframes toastSlideIn {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.toast-success {
+            border-left-color: #2ecc71;
+        }
+
+        .toast.toast-error {
+            border-left-color: #e74c3c;
+        }
+
+        .toast.toast-info {
+            border-left-color: #3498db;
+        }
+
+        .toast.toast-warning {
+            border-left-color: #f39c12;
+        }
+
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+        }
+
+        .toast-success .toast-icon {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+
+        .toast-error .toast-icon {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .toast-info .toast-icon {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .toast-warning .toast-icon {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 3px;
+            font-size: 15px;
+        }
+
+        .toast-message {
+            color: #636e72;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #95a5a6;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .toast-close:hover {
+            color: #e74c3c;
+            transform: rotate(90deg);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 15px;
+            border: 2px dashed #e0e6ed;
+            margin: 20px 0;
+        }
+
+        .empty-state-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+            opacity: 0.6;
+        }
+
+        .empty-state-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #495057;
+            background: linear-gradient(135deg, #2c3e50, #4a6583);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .empty-state-text {
+            font-size: 15px;
+            max-width: 400px;
+            margin: 0 auto 25px;
+            line-height: 1.6;
+        }
+
+        /* File Viewer Modal */
+        .file-viewer-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .file-viewer-modal.active {
+            display: flex;
+            animation: viewerFadeIn 0.3s ease-out;
+        }
+
+        @@keyframes viewerFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .file-viewer-content {
+            background: linear-gradient(135deg, #1a1a1a, #2d3436);
+            border-radius: 15px;
+            width: 95%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow:
+                0 40px 80px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+        }
+
+        .viewer-header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 18px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .viewer-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+        }
+
+        .viewer-body {
+            padding: 0;
+            overflow: auto;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #1a1a1a;
+        }
+
+        .viewer-body img, .viewer-body embed {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 5px;
+        }
+
+        .close-viewer {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-viewer:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.98);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .loading-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .spinner {
+            width: 70px;
+            height: 70px;
+            border: 4px solid transparent;
+            border-top: 4px solid #3498db;
+            border-right: 4px solid #2ecc71;
+            border-bottom: 4px solid #9b59b6;
+            border-left: 4px solid #f39c12;
+            border-radius: 50%;
+            animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+            position: relative;
+        }
+
+        .spinner::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            border: 4px solid transparent;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite reverse;
+        }
+
+        @@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(720deg); }
+        }
+
+        .loading-text {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-top: 20px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @@keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Responsive Design */
+        @@media (max-width: 1200px) {
+            .container-wrapper {
+                padding: 20px;
+                margin: 15px;
+            }
+
+            .header {
+                font-size: 2rem;
+            }
+        }
+
+        @@media (max-width: 992px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .files-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .file-actions {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .selector-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .selector-label {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .pagination-container {
+                flex-wrap: wrap;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container-wrapper {
+                padding: 15px;
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .header {
+                font-size: 1.6rem;
+                margin-bottom: 20px;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            .files-count {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+
+            .toast {
+                min-width: 250px;
+            }
+
+            .modal-content {
+                width: 95%;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .container-wrapper {
+                padding: 12px;
+            }
+
+            .header {
+                font-size: 1.3rem;
+            }
+
+            .btn {
+                padding: 14px 20px;
+                font-size: 14px;
+            }
+
+            .files-table th,
+            .files-table td {
+                padding: 12px 15px;
+            }
+
+            .action-icon {
+                width: 32px;
+                height: 32px;
+            }
+        }
+
+        /* Custom Icons using CSS Content */
+        .icon-folder:before { content: "📁"; }
+        .icon-folder-open:before { content: "📂"; }
+        .icon-tags:before { content: "🏷️"; }
+        .icon-calendar:before { content: "📅"; }
+        .icon-search:before { content: "🔍"; }
+        .icon-upload:before { content: "📤"; }
+        .icon-file:before { content: "📄"; }
+        .icon-success:before { content: "✓"; }
+        .icon-error:before { content: "✗"; }
+        .icon-info:before { content: "ℹ"; }
+        .icon-warning:before { content: "⚠"; }
+        .icon-view:before { content: "👁"; }
+        .icon-download:before { content: "⬇"; }
+        .icon-delete:before { content: "🗑"; }
+        .icon-refresh:before { content: "🔄"; }
+        .icon-pdf:before { content: "📕"; }
+        .icon-doc:before { content: "📘"; }
+        .icon-xls:before { content: "📗"; }
+        .icon-img:before { content: "🖼"; }
+        .icon-txt:before { content: "📝"; }
+        .icon-file-default:before { content: "📄"; }
+
+        /* Additional icons for new features */
+        .icon-filter:before { content: "⚙️"; }
+        .icon-sort:before { content: "↕️"; }
+        .icon-chevron-left:before { content: "◀"; }
+        .icon-chevron-right:before { content: "▶"; }
+        .icon-first-page:before { content: "⏪"; }
+        .icon-last-page:before { content: "⏩"; }
+        .icon-check:before { content: "✔"; }
+        .icon-close:before { content: "✕"; }
+    </style>
+
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Custom Modal (SweetAlert Alternative) -->
+    <div class="custom-modal" id="customModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="margin: 0; font-size: 18px;" id="modalTitle"></h3>
+                <button class="modal-close" id="modalClose">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                 Modal content will be displayed here 
+            </div>
+            <div class="modal-footer" id="modalFooter">
+                 Modal buttons will be displayed here 
+            </div>
+        </div>
+    </div>
+
+    <div class="container-wrapper">
+        <div class="header">
+            <span class="icon-folder"></span> PENSION CLAIM DATA MANAGEMENT SYSTEM
+        </div>
+
+        <!-- Path Navigation -->
+        <div class="path-navigation" id="pathNavigation">
+            <span id="currentPath" class="empty-path">Select folder to view path</span>
+        </div>
+
+        <!-- Message Alert -->
+        <div class="message-alert" id="messageAlert"></div>
+
+        <!-- Main Form Section -->
+        <div class="form-section">
+            <div class="section-title">
+                <span class="icon-folder section-icon"></span>
+                Folder Selection & File Upload
+            </div>
+
+            <div class="folder-selector">
+                <!-- Main Folder -->
+                <div class="selector-row">
+                    <div class="selector-label form-label-required">
+                        <span class="icon-folder"></span> Main Folder
+                    </div>
+                    <select id="mainFolder" class="form-control">
+                        <option value="">-- Select Main Folder --</option>
+                        @foreach (var folder in Model.MainFolders)
+                        {
+                            <option value="@folder">@folder</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Sub Folder -->
+                <div class="selector-row" id="subFolderRow" style="display: none;">
+                    <div class="selector-label">
+                        <span class="icon-folder-open"></span> Sub Folder
+                    </div>
+                    <select id="subFolder" class="form-control">
+                        <option value="">-- Select Sub Folder --</option>
+                    </select>
+                </div>
+
+                <!-- Category -->
+                <div class="selector-row" id="categoryRow" style="display: none;">
+                    <div class="selector-label">
+                        <span class="icon-tags"></span> Category
+                    </div>
+                    <select id="category" class="form-control">
+                        <option value="">-- Select Category --</option>
+                    </select>
+                </div>
+
+                <!-- Year and Month -->
+                <div class="selector-row">
+                    <div class="selector-label form-label-required">
+                        <span class="icon-calendar"></span> Year
+                    </div>
+                    <select id="year" class="form-control">
+                        <option value="">-- Select Year --</option>
+                        @foreach (var year in Model.Years)
+                        {
+                            <option value="@year.Value" selected="@(year.Value == Model.SelectedYear)">@year.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="selector-row">
+                    <div class="selector-label form-label-required">
+                        <span class="icon-calendar"></span> Month
+                    </div>
+                    <select id="month" class="form-control">
+                        <option value="">-- Select Month --</option>
+                        @foreach (var month in Model.Months)
+                        {
+                            <option value="@month.Value" selected="@(month.Value == Model.SelectedMonth)">@month.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="button" class="btn btn-primary" id="btnBrowse">
+                    <span class="icon-search"></span> Browse Folder
+                </button>
+                <button type="button" class="btn btn-secondary" id="btnRefresh" onclick="location.reload()">
+                    <span class="icon-refresh"></span> Refresh
+                </button>
+                <button type="button" class="btn btn-warning" id="btnResetFilters">
+                    <span class="icon-filter"></span> Reset Filters
+                </button>
+            </div>
+
+            <!-- Search Section -->
+            <div class="search-section" id="searchSection" style="display: none;">
+                <div class="section-title">
+                    <span class="icon-search section-icon"></span>
+                    Search Files
+                </div>
+
+                <div class="search-box">
+                    <span class="search-icon icon-search"></span>
+                    <input type="text" id="fileSearch" placeholder="Search by file name, type, or date..." class="form-control">
+                </div>
+
+                <div class="action-buttons" style="margin-top: 15px;">
+                    <button type="button" class="btn btn-secondary" id="btnClearSearch">
+                        <span class="icon-close"></span> Clear Search
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btnAdvancedSearch">
+                        <span class="icon-filter"></span> Advanced Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- File Upload Section -->
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 2px solid #f0f3f7;">
+                <div class="section-title">
+                    <span class="icon-upload section-icon"></span>
+                    Upload File to Selected Folder
+                </div>
+
+                <div class="form-group">
+                    <div class="selector-row">
+                        <div class="selector-label form-label-required">
+                            <span class="icon-upload"></span> Select File (Max 50MB)
+                        </div>
+                        <input type="file" id="uploadFile" class="form-control"
+                               accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.gif">
+                    </div>
+                    <small style="color: #7f8c8d; margin-top: 8px; padding-left: 135px; display: block; font-size: 13px;">
+                        <span class="icon-info"></span> Allowed formats: PDF, DOC, DOCX, XLS, XLSX, TXT, JPG, JPEG, PNG, GIF
+                    </small>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-success" id="btnUpload">
+                        <span class="icon-upload"></span> Upload File
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="btnCancelUpload">
+                        <span class="icon-close"></span> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Files List Section -->
+        <div class="files-section" id="filesSection">
+            <div class="files-header">
+                <div class="section-title">
+                    <span class="icon-file section-icon"></span>
+                    Files in Current Folder
+                </div>
+                <div class="files-count">
+                    <span class="icon-file"></span> <span id="fileCount">0</span> file(s) found
+                </div>
+            </div>
+
+            <!-- Sort Controls -->
+            <div class="action-buttons" style="margin-bottom: 20px; justify-content: flex-end;">
+                <div class="selector-row" style="margin: 0; width: auto;">
+                    <div class="selector-label">
+                        <span class="icon-sort"></span> Sort By:
+                    </div>
+                    <select id="sortBy" class="form-control" style="width: 200px;">
+                        <option value="name">Name (A-Z)</option>
+                        <option value="name_desc">Name (Z-A)</option>
+                        <option value="date">Date (Newest)</option>
+                        <option value="date_old">Date (Oldest)</option>
+                        <option value="size">Size (Largest)</option>
+                        <option value="type">File Type</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="files-table-container">
+                <table class="files-table" id="filesTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">
+                                <span class="icon-file"></span> File Name
+                            </th>
+                            <th style="width: 15%;">
+                                <span class="icon-tags"></span> Type
+                            </th>
+                            <th style="width: 15%;">
+                                <span class="icon-calendar"></span> Size
+                            </th>
+                            <th style="width: 15%;">
+                                <span class="icon-calendar"></span> Modified
+                            </th>
+                            <th style="width: 15%;">
+                                <span class="icon-sort"></span> Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="filesContainer">
+                        <!-- File list will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-state-icon icon-folder-open"></div>
+                <h3 class="empty-state-title">No Files Found</h3>
+                <p class="empty-state-text">
+                    The selected folder is empty or no files match your search criteria.
+                    Try selecting a different folder or uploading files.
+                </p>
+                <div class="action-buttons" style="justify-content: center;">
+                    <button type="button" class="btn btn-primary" onclick="document.getElementById('uploadFile').click()">
+                        <span class="icon-upload"></span> Upload First File
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('btnResetFilters').click()">
+                        <span class="icon-refresh"></span> Reset Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-container" id="paginationContainer" style="display: none;">
+                <button class="pagination-btn" id="btnFirstPage" title="First Page">
+                    <span class="icon-first-page"></span>
+                </button>
+                <button class="pagination-btn" id="btnPrevPage">
+                    <span class="icon-chevron-left"></span> Previous
+                </button>
+
+                <div class="pagination-info">
+                    Page <span id="currentPage">1</span> of <span id="totalPages">1</span>
+                    | Showing <span id="startItem">1</span>-<span id="endItem">10</span> of <span id="totalItems">0</span> files
+                </div>
+
+                <button class="pagination-btn" id="btnNextPage">
+                    Next <span class="icon-chevron-right"></span>
+                </button>
+                <button class="pagination-btn" id="btnLastPage" title="Last Page">
+                    <span class="icon-last-page"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Viewer Modal -->
+    <div class="file-viewer-modal" id="fileViewerModal">
+        <div class="file-viewer-content">
+            <div class="viewer-header">
+                <h3 style="margin: 0; font-size: 16px;" id="viewerTitle"></h3>
+                <button class="close-viewer" id="closeViewer">×</button>
+            </div>
+            <div class="viewer-body" id="viewerBody">
+                <!-- File content will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">
+            Processing...
+        </div>
+    </div>
+
+    <script>
+        // ========== Core Variables ==========
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let allFiles = [];
+        let filteredFiles = [];
+        let currentSort = 'name';
+
+        // ========== Toast Notification System ==========
+        function showToast(title, message, type = 'info', duration = 5000) {
+            const toastContainer = document.getElementById('toastContainer');
+            const toastId = 'toast-' + Date.now();
+
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.id = toastId;
+            toast.innerHTML = `
+                <div class="toast-icon icon-${type}"></div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="removeToast('${toastId}')">×</button>
+            `;
+
+            toastContainer.appendChild(toast);
+
+            // Auto remove after duration
+            setTimeout(() => {
+                removeToast(toastId);
+            }, duration);
+
+            return toastId;
+        }
+
+        function removeToast(toastId) {
+            const toast = document.getElementById(toastId);
+            if (toast) {
+                toast.style.animation = 'toastSlideIn 0.4s ease-out reverse';
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 400);
+            }
+        }
+
+        // ========== Custom Modal System ==========
+        function showModal(title, message, type = 'info', buttons = []) {
+            const modal = document.getElementById('customModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            const modalFooter = document.getElementById('modalFooter');
+
+            // Set title and message
+            modalTitle.textContent = title;
+            modalBody.innerHTML = `<p>${message}</p>`;
+
+            // Clear previous buttons
+            modalFooter.innerHTML = '';
+
+            // Add buttons
+            buttons.forEach(button => {
+                const btn = document.createElement('button');
+                btn.className = `btn ${button.class || 'btn-primary'}`;
+                btn.textContent = button.text;
+                btn.onclick = button.action;
+                modalFooter.appendChild(btn);
+            });
+
+            // Add default close button if no buttons provided
+            if (buttons.length === 0) {
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'btn btn-secondary';
+                closeBtn.textContent = 'Close';
+                closeBtn.onclick = closeModal;
+                modalFooter.appendChild(closeBtn);
+            }
+
+            modal.classList.add('active');
+
+            // Close modal when clicking outside
+            modal.onclick = function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            };
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').classList.remove('active');
+        }
+
+        // ========== Loading Overlay ==========
+        function showLoading(message = 'Processing...') {
+            const overlay = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+            loadingText.textContent = message;
+            overlay.classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+
+        // ========== Path Display ==========
+        function updatePathDisplay() {
+            const mainFolder = document.getElementById('mainFolder').value;
+            const subFolder = document.getElementById('subFolder').value;
+            const category = document.getElementById('category').value;
+            const year = document.getElementById('year').value;
+            const month = document.getElementById('month').value;
+
+            let path = '';
+
+            if (mainFolder) {
+                path = `<span style="color: #2980b9; font-weight: 700; font-size: 15px;">PENSION CLAIM DATA</span>`;
+                path += ` › <span style="color: #3498db; font-weight: 600;">${mainFolder}</span>`;
+
+                if (subFolder) {
+                    path += ` › <span style="color: #9b59b6; font-weight: 600;">${subFolder}</span>`;
+                }
+
+                if (category) {
+                    path += ` › <span style="color: #2ecc71; font-weight: 600;">${category}</span>`;
+                }
+
+                if (year && month) {
+                    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                                       'July', 'August', 'September', 'October', 'November', 'December'];
+                    path += ` › <span style="color: #e74c3c; font-weight: 600;">${year}</span>`;
+                    path += ` › <span style="color: #f39c12; font-weight: 600;">${monthNames[month - 1]}</span>`;
+                }
+            }
+
+            const pathElement = document.getElementById('currentPath');
+            if (path) {
+                pathElement.innerHTML = path;
+                pathElement.classList.remove('empty-path');
+            } else {
+                pathElement.textContent = 'Select folder to view path';
+                pathElement.classList.add('empty-path');
+            }
+        }
+
+        // ========== File Management Functions ==========
+        function renderFiles(files) {
+            const container = document.getElementById('filesContainer');
+            const emptyState = document.getElementById('emptyState');
+
+            if (files.length === 0) {
+                container.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            let html = '';
+            files.forEach(file => {
+                const icon = getFileIcon(file.type);
+                const size = formatFileSize(file.size);
+                const date = formatDate(file.modified);
+
+                html += `
+                    <tr>
+                        <td>
+                            <span class="file-icon ${icon.class}">${icon.symbol}</span>
+                            <span class="file-name" title="${file.name}">${file.name}</span>
+                        </td>
+                        <td>
+                            <span class="file-type">${file.type.toUpperCase()}</span>
+                        </td>
+                        <td>
+                            <span class="file-size">${size}</span>
+                        </td>
+                        <td>
+                            <span class="file-date">${date}</span>
+                        </td>
+                        <td>
+                            <div class="file-actions">
+                                <button class="action-icon view-btn" onclick="viewFile('${file.path}')" title="View File">
+                                    <span class="icon-view"></span>
+                                </button>
+                                <button class="action-icon download-btn" onclick="downloadFile('${file.path}')" title="Download File">
+                                    <span class="icon-download"></span>
+                                </button>
+                                <button class="action-icon delete-btn" onclick="confirmDelete('${file.path}', '${file.name}')" title="Delete File">
+                                    <span class="icon-delete"></span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function getFileIcon(fileType) {
+            const icons = {
+                'pdf': { class: 'icon-pdf', symbol: '📕' },
+                'doc': { class: 'icon-doc', symbol: '📘' },
+                'docx': { class: 'icon-doc', symbol: '📘' },
+                'xls': { class: 'icon-xls', symbol: '📗' },
+                'xlsx': { class: 'icon-xls', symbol: '📗' },
+                'jpg': { class: 'icon-img', symbol: '🖼' },
+                'jpeg': { class: 'icon-img', symbol: '🖼' },
+                'png': { class: 'icon-img', symbol: '🖼' },
+                'gif': { class: 'icon-img', symbol: '🖼' },
+                'txt': { class: 'icon-txt', symbol: '📝' }
+            };
+
+            return icons[fileType.toLowerCase()] || { class: 'icon-file-default', symbol: '📄' };
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // ========== Search and Filter Functions ==========
+        function performSearch() {
+            const searchTerm = document.getElementById('fileSearch').value.toLowerCase();
+
+            if (!searchTerm) {
+                filteredFiles = [...allFiles];
+            } else {
+                filteredFiles = allFiles.filter(file =>
+                    file.name.toLowerCase().includes(searchTerm) ||
+                    file.type.toLowerCase().includes(searchTerm) ||
+                    formatDate(file.modified).toLowerCase().includes(searchTerm)
+                );
+            }
+
+            applySort();
+            updatePagination();
+            renderCurrentPage();
+        }
+
+        function applySort() {
+            const sortBy = document.getElementById('sortBy').value;
+            currentSort = sortBy;
+
+            filteredFiles.sort((a, b) => {
+                switch(sortBy) {
+                    case 'name':
+                        return a.name.localeCompare(b.name);
+                    case 'name_desc':
+                        return b.name.localeCompare(a.name);
+                    case 'date':
+                        return new Date(b.modified) - new Date(a.modified);
+                    case 'date_old':
+                        return new Date(a.modified) - new Date(b.modified);
+                    case 'size':
+                        return b.size - a.size;
+                    case 'type':
+                        return a.type.localeCompare(b.type);
+                    default:
+                        return 0;
+                }
+            });
+        }
+
+        // ========== Pagination Functions ==========
+        function updatePagination() {
+            const totalItems = filteredFiles.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            // Update pagination info
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('totalPages').textContent = totalPages;
+
+            // Show/hide pagination container
+            const paginationContainer = document.getElementById('paginationContainer');
+            if (totalItems > itemsPerPage) {
+                paginationContainer.style.display = 'flex';
+            } else {
+                paginationContainer.style.display = 'none';
+            }
+
+            // Update page numbers
+            updatePageNumbers();
+        }
+
+        function updatePageNumbers() {
+            const totalPages = Math.ceil(filteredFiles.length / itemsPerPage);
+
+            // Clamp current page within valid range
+            if (currentPage > totalPages) {
+                currentPage = totalPages || 1;
+            }
+
+            // Update UI elements
+            document.getElementById('currentPage').textContent = currentPage;
+
+            const startItem = (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, filteredFiles.length);
+
+            document.getElementById('startItem').textContent = startItem;
+            document.getElementById('endItem').textContent = endItem;
+
+            // Update button states
+            document.getElementById('btnFirstPage').disabled = currentPage <= 1;
+            document.getElementById('btnPrevPage').disabled = currentPage <= 1;
+            document.getElementById('btnNextPage').disabled = currentPage >= totalPages;
+            document.getElementById('btnLastPage').disabled = currentPage >= totalPages;
+
+            // Update button classes
+            ['btnFirstPage', 'btnPrevPage', 'btnNextPage', 'btnLastPage'].forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn.disabled) {
+                    btn.classList.add('btn-disabled');
+                } else {
+                    btn.classList.remove('btn-disabled');
+                }
+            });
+        }
+
+        function renderCurrentPage() {
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageFiles = filteredFiles.slice(start, end);
+
+            renderFiles(pageFiles);
+            document.getElementById('fileCount').textContent = filteredFiles.length;
+        }
+
+        function changePage(page) {
+            if (page < 1 || page > Math.ceil(filteredFiles.length / itemsPerPage)) {
+                return;
+            }
+
+            currentPage = page;
+            updatePageNumbers();
+            renderCurrentPage();
+
+            // Scroll to top of files section
+            document.getElementById('filesSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ========== File Operations ==========
+        function confirmDelete(filePath, fileName) {
+            showModal(
+                'Confirm Delete',
+                `Are you sure you want to delete <strong>"${fileName}"</strong>?<br>
+                <small style="color: #e74c3c; font-weight: 600;">This action cannot be undone!</small>`,
+                'warning',
+                [
+                    {
+                        text: 'Cancel',
+                        class: 'btn-secondary',
+                        action: closeModal
+                    },
+                    {
+                        text: 'Yes, Delete',
+                        class: 'btn-success',
+                        action: function() {
+                            deleteFile(filePath);
+                            closeModal();
+                        }
+                    }
+                ]
+            );
+        }
+
+        function deleteFile(filePath) {
+            showLoading('Deleting file...');
+
+            makeRequest('@Url.Action("DeleteFile", "PensionClaim")', { filePath: filePath })
+                .then(response => {
+                    hideLoading();
+
+                    if (response.success) {
+                        showToast('Success', 'File deleted successfully', 'success');
+                        // Refresh file list
+                        document.getElementById('btnBrowse').click();
+                    } else {
+                        showToast('Error', 'Failed to delete file: ' + response.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    showToast('Error', 'Failed to delete file', 'error');
+                    console.error('Error:', error);
+                });
+        }
+
+        function downloadFile(filePath) {
+            showLoading('Preparing download...');
+
+            // Create a temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = '@Url.Action("DownloadFile", "PensionClaim")?filePath=' + encodeURIComponent(filePath);
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            setTimeout(() => {
+                hideLoading();
+                showToast('Download Started', 'Your file download has begun', 'success');
+            }, 1000);
+        }
+
+        function viewFile(filePath) {
+            showLoading('Loading file...');
+
+            makeRequest('@Url.Action("ViewFile", "PensionClaim")', { filePath: filePath })
+                .then(response => {
+                    hideLoading();
+
+                    if (response.success) {
+                        if (response.isViewable === false) {
+                            showModal(
+                                'Cannot Preview',
+                                'This file type cannot be previewed in the browser. Would you like to download it instead?',
+                                'info',
+                                [
+                                    {
+                                        text: 'Cancel',
+                                        class: 'btn-secondary',
+                                        action: closeModal
+                                    },
+                                    {
+                                        text: 'Download',
+                                        class: 'btn-success',
+                                        action: function() {
+                                            downloadFile(filePath);
+                                            closeModal();
+                                        }
+                                    }
+                                ]
+                            );
+                            return;
+                        }
+
+                        const modal = document.getElementById('fileViewerModal');
+                        const title = document.getElementById('viewerTitle');
+                        const body = document.getElementById('viewerBody');
+
+                        title.textContent = response.fileName || 'File Viewer';
+
+                        if (response.contentType === 'application/pdf') {
+                            body.innerHTML = `<embed src="data:application/pdf;base64,${response.fileData}" type="application/pdf" width="100%" height="100%">`;
+                        } else if (response.contentType.startsWith('image/')) {
+                            body.innerHTML = `<img src="data:${response.contentType};base64,${response.fileData}" alt="${response.fileName}" style="max-width: 100%; max-height: 70vh;">`;
+                        } else {
+                            body.innerHTML = `<iframe src="data:${response.contentType};base64,${response.fileData}" width="100%" height="500px"></iframe>`;
+                        }
+
+                        modal.classList.add('active');
+                    } else {
+                        showToast('Error', 'Failed to view file: ' + response.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    showToast('Error', 'Failed to load file', 'error');
+                    console.error('Error:', error);
+                });
+        }
+
+        // ========== AJAX Helper Function ==========
+        function makeRequest(url, data, method = 'POST') {
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open(method, url, true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            resolve(response);
+                        } catch (e) {
+                            reject(new Error('Invalid JSON response'));
+                        }
+                    } else {
+                        reject(new Error('Request failed: ' + xhr.statusText));
+                    }
+                };
+
+                xhr.onerror = function() {
+                    reject(new Error('Network error'));
+                };
+
+                const params = new URLSearchParams();
+                for (const key in data) {
+                    if (data[key] !== null && data[key] !== undefined) {
+                        params.append(key, data[key]);
+                    }
+                }
+
+                xhr.send(params.toString());
+            });
+        }
+
+        // ========== Event Listeners ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize path display
+            updatePathDisplay();
+
+            // Set default year and month
+            const currentYear = new Date().getFullYear();
+            const currentMonth = new Date().getMonth() + 1;
+
+            const yearSelect = document.getElementById('year');
+            const monthSelect = document.getElementById('month');
+
+            if (!yearSelect.value) {
+                yearSelect.value = currentYear;
+            }
+
+            if (!monthSelect.value) {
+                monthSelect.value = currentMonth;
+            }
+
+            updatePathDisplay();
+
+            // Initialize pagination buttons
+            document.getElementById('btnFirstPage').onclick = () => changePage(1);
+            document.getElementById('btnPrevPage').onclick = () => changePage(currentPage - 1);
+            document.getElementById('btnNextPage').onclick = () => changePage(currentPage + 1);
+            document.getElementById('btnLastPage').onclick = () => changePage(Math.ceil(filteredFiles.length / itemsPerPage));
+
+            // Search functionality
+            document.getElementById('fileSearch').addEventListener('input', performSearch);
+
+            // Sort functionality
+            document.getElementById('sortBy').addEventListener('change', function() {
+                applySort();
+                currentPage = 1;
+                updatePageNumbers();
+                renderCurrentPage();
+            });
+
+            // Reset filters
+            document.getElementById('btnResetFilters').addEventListener('click', function() {
+                document.getElementById('fileSearch').value = '';
+                document.getElementById('sortBy').value = 'name';
+                performSearch();
+                showToast('Filters Reset', 'All search filters have been reset', 'info');
+            });
+
+            // Clear search
+            document.getElementById('btnClearSearch').addEventListener('click', function() {
+                document.getElementById('fileSearch').value = '';
+                performSearch();
+                showToast('Search Cleared', 'Search filter has been cleared', 'info');
+            });
+
+            // Close viewer modal
+            document.getElementById('closeViewer').addEventListener('click', function() {
+                document.getElementById('fileViewerModal').classList.remove('active');
+                document.getElementById('viewerBody').innerHTML = '';
+            });
+
+            // Close modal when clicking outside
+            document.getElementById('fileViewerModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                    document.getElementById('viewerBody').innerHTML = '';
+                }
+            });
+
+            // Cancel upload
+            document.getElementById('btnCancelUpload').addEventListener('click', function() {
+                document.getElementById('uploadFile').value = '';
+                showToast('Upload Cancelled', 'File selection has been cleared', 'warning');
+            });
+        });
+
+        // ========== Existing Event Handlers (Updated) ==========
+        document.getElementById('mainFolder').addEventListener('change', function() {
+            const mainFolder = this.value;
+            const subFolderSelect = document.getElementById('subFolder');
+            const subFolderRow = document.getElementById('subFolderRow');
+            const categoryRow = document.getElementById('categoryRow');
+            const searchSection = document.getElementById('searchSection');
+
+            if (!mainFolder) {
+                subFolderRow.style.display = 'none';
+                categoryRow.style.display = 'none';
+                subFolderSelect.innerHTML = '<option value="">-- Select Sub Folder --</option>';
+                searchSection.style.display = 'none';
+                updatePathDisplay();
+                return;
+            }
+
+            showLoading('Loading sub folders...');
+
+            makeRequest('@Url.Action("GetSubFolders", "PensionClaim")', { mainFolder: mainFolder })
+                .then(response => {
+                    subFolderSelect.innerHTML = '<option value="">-- Select Sub Folder --</option>';
+
+                    if (response.subFolders && response.subFolders.length > 0) {
+                        subFolderRow.style.display = 'flex';
+                        response.subFolders.forEach(sub => {
+                            subFolderSelect.innerHTML += `<option value="${sub}">${sub}</option>`;
+                        });
+                    } else {
+                        subFolderRow.style.display = 'none';
+                    }
+
+                    categoryRow.style.display = 'none';
+                    document.getElementById('category').innerHTML = '<option value="">-- Select Category --</option>';
+
+                    hideLoading();
+                    updatePathDisplay();
+                    searchSection.style.display = 'block';
+
+                    // Animate the search section
+                    setTimeout(() => {
+                        searchSection.style.opacity = '1';
+                    }, 10);
+                })
+                .catch(error => {
+                    hideLoading();
+                    subFolderRow.style.display = 'none';
+                    subFolderSelect.innerHTML = '<option value="">-- Select Sub Folder --</option>';
+                    showToast('Error', 'Failed to load sub folders', 'error');
+                    console.error('Error:', error);
+                });
+        });
+
+        document.getElementById('subFolder').addEventListener('change', function() {
+            const mainFolder = document.getElementById('mainFolder').value;
+            const subFolder = this.value;
+            const categorySelect = document.getElementById('category');
+            const categoryRow = document.getElementById('categoryRow');
+
+            if (!mainFolder || !subFolder) {
+                categoryRow.style.display = 'none';
+                updatePathDisplay();
+                return;
+            }
+
+            showLoading('Loading categories...');
+
+            makeRequest('@Url.Action("GetCategories", "PensionClaim")', {
+                mainFolder: mainFolder,
+                subFolder: subFolder
+            })
+                .then(response => {
+                    categorySelect.innerHTML = '<option value="">-- Select Category --</option>';
+
+                    if (response.categories && response.categories.length > 0) {
+                        categoryRow.style.display = 'flex';
+                        response.categories.forEach(cat => {
+                            categorySelect.innerHTML += `<option value="${cat}">${cat}</option>`;
+                        });
+                    } else {
+                        categoryRow.style.display = 'none';
+                    }
+
+                    hideLoading();
+                    updatePathDisplay();
+                })
+                .catch(error => {
+                    hideLoading();
+                    categoryRow.style.display = 'none';
+                    showToast('Error', 'Failed to load categories', 'error');
+                    console.error('Error:', error);
+                });
+        });
+
+        document.getElementById('btnBrowse').addEventListener('click', function() {
+            const mainFolder = document.getElementById('mainFolder').value;
+            const subFolder = document.getElementById('subFolder').value;
+            const category = document.getElementById('category').value;
+            const year = document.getElementById('year').value;
+            const month = document.getElementById('month').value;
+
+            if (!mainFolder) {
+                showToast('Error', 'Please select a main folder', 'error');
+                return;
+            }
+
+            if (!year || !month) {
+                showToast('Error', 'Please select year and month', 'error');
+                return;
+            }
+
+            showLoading('Loading files...');
+
+            makeRequest('@Url.Action("BrowseFolder", "PensionClaim")', {
+                SelectedFolder: mainFolder,
+                SelectedSubFolder: subFolder,
+                SelectedCategory: category,
+                SelectedYear: year,
+                SelectedMonth: month
+            })
+                .then(response => {
+                    hideLoading();
+
+                    if (response.success) {
+                        showToast('Success', response.message, 'success');
+
+                        // Show files section with animation
+                        const filesSection = document.getElementById('filesSection');
+                        filesSection.classList.add('visible');
+                        filesSection.style.opacity = '0';
+
+                        setTimeout(() => {
+                            filesSection.style.opacity = '1';
+                        }, 10);
+
+                        document.getElementById('fileCount').textContent = response.fileCount || 0;
+
+                        // Update path display
+                        const pathElement = document.getElementById('currentPath');
+                        pathElement.innerHTML = response.currentPath || '';
+                        pathElement.classList.remove('empty-path');
+
+                        // Store files and initialize pagination
+                        if (response.files && Array.isArray(response.files)) {
+                            allFiles = response.files;
+                            filteredFiles = [...allFiles];
+                            applySort();
+                            currentPage = 1;
+                            updatePagination();
+                            renderCurrentPage();
+                        } else {
+                            // Fallback to HTML rendering
+                            document.getElementById('filesContainer').innerHTML = response.fileListHtml || '<tr><td colspan="5" class="empty-state">No files found</td></tr>';
+                        }
+                    } else {
+                        showToast('Error', response.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    showToast('Error', 'Failed to browse folder. Please try again.', 'error');
+                    console.error('Error:', error);
+                });
+        });
+
+        document.getElementById('btnUpload').addEventListener('click', function() {
+            const mainFolder = document.getElementById('mainFolder').value;
+            const subFolder = document.getElementById('subFolder').value;
+            const category = document.getElementById('category').value;
+            const year = document.getElementById('year').value;
+            const month = document.getElementById('month').value;
+            const fileInput = document.getElementById('uploadFile');
+
+            if (!mainFolder) {
+                showToast('Error', 'Please select a main folder first', 'error');
+                return;
+            }
+
+            if (!year || !month) {
+                showToast('Error', 'Please select year and month', 'error');
+                return;
+            }
+
+            if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                showToast('Error', 'Please select a file to upload', 'error');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const maxSize = 50 * 1024 * 1024;
+
+            if (file.size > maxSize) {
+                showToast('Error', 'File size exceeds maximum limit of 50MB', 'error');
+                return;
+            }
+
+            const allowedExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.txt', '.jpg', '.jpeg', '.png', '.gif'];
+            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+            if (!allowedExtensions.includes(fileExtension)) {
+                showToast('Error', 'File type not allowed. Please select a valid file.', 'error');
+                return;
+            }
+
+            showLoading('Uploading file...');
+
+            const formData = new FormData();
+            formData.append('SelectedFolder', mainFolder);
+            formData.append('SelectedSubFolder', subFolder || '');
+            formData.append('SelectedCategory', category || '');
+            formData.append('SelectedYear', year);
+            formData.append('SelectedMonth', month);
+            formData.append('UploadFile', file);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '@Url.Action("UploadFile", "PensionClaim")', true);
+
+            xhr.upload.onprogress = function(e) {
+                if (e.lengthComputable) {
+                    const percentComplete = (e.loaded / e.total) * 100;
+                    showLoading(`Uploading... ${Math.round(percentComplete)}% complete`);
+                }
+            };
+
+            xhr.onload = function() {
+                hideLoading();
+
+                try {
+                    const response = JSON.parse(xhr.responseText);
+
+                    if (response.success) {
+                        showToast('Success', 'File uploaded successfully!', 'success');
+                        fileInput.value = '';
+
+                        // Auto-refresh file list after successful upload
+                        setTimeout(() => {
+                            document.getElementById('btnBrowse').click();
+                        }, 1000);
+                    } else {
+                        showToast('Error', 'Upload failed: ' + response.message, 'error');
+                    }
+                } catch (e) {
+                    showToast('Error', 'Failed to upload file. Please try again.', 'error');
+                    console.error('Error:', e);
+                }
+            };
+
+            xhr.onerror = function() {
+                hideLoading();
+                showToast('Error', 'Network error while uploading file. Please check your connection.', 'error');
+            };
+
+            xhr.send(formData);
+        });
+
+        // Update path when any dropdown changes
+        document.getElementById('subFolder').addEventListener('change', updatePathDisplay);
+        document.getElementById('category').addEventListener('change', updatePathDisplay);
+        document.getElementById('year').addEventListener('change', updatePathDisplay);
+        document.getElementById('month').addEventListener('change', updatePathDisplay);
+
+        // Close modal events
+        document.getElementById('modalClose').addEventListener('click', closeModal);
+    </script>
+</body>
+</html>

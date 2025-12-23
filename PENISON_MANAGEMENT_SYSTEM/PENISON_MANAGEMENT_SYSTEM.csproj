@@ -358,6 +358,7 @@
     <Compile Include="Controllers\GalleryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImageUploadController.cs" />
+    <Compile Include="Controllers\PensionClaimController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\SFTPController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -366,6 +367,7 @@
     <Compile Include="DA\ImageReportDA.cs" />
     <Compile Include="DA\PensionDataAccess.cs" />
     <Compile Include="DA\PPAAccountDA.cs" />
+    <Compile Include="DA\Repository.cs" />
     <Compile Include="DA\SFTPHelper.cs" />
     <Compile Include="ExistingImageProcessor\ImageProcessor.cs" />
     <Compile Include="ExistingImageProcessor\ReportGenerator .cs" />
@@ -380,6 +382,7 @@
     <Compile Include="Models\ImageViewModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\PendingAccountStatus.cs" />
+    <Compile Include="Models\PensionClaimViewModel.cs" />
     <Compile Include="Models\PMSImageUpload.cs" />
     <Compile Include="Models\PPADETAILSWITHIMAGE.cs" />
     <Compile Include="Models\RegisterModel.cs" />
@@ -2469,6 +2472,7 @@
     <Content Include="assets\css\sidebar-menu.css" />
     <Content Include="assets\css\UPLOADPDF.css" />
     <Content Include="assets\css\VIEWUPLOADEDPDF.css" />
+    <Content Include="assets\Excel.js" />
     <Content Include="assets\EXISTLOG\sweetalert.js" />
     <Content Include="assets\flags\1x1\ad.svg" />
     <Content Include="assets\flags\1x1\ae.svg" />
@@ -3022,6 +3026,7 @@
     <Content Include="assets\images\timeline\html5.svg" />
     <Content Include="assets\images\timeline\react.svg" />
     <Content Include="assets\images\YEARLY.gif" />
+    <Content Include="assets\jquery-3.7.1.min.js" />
     <Content Include="assets\JQUERY\jquery-3.6.0\AUTHORS.txt" />
     <Content Include="assets\JQUERY\jquery-3.6.0\build\release.js" />
     <Content Include="assets\JQUERY\jquery-3.6.0\build\release\cdn.js" />
@@ -3558,6 +3563,7 @@
     <Content Include="assets\PDF\pdfjs-dist-2.11.338\web\images\shadow.png" />
     <Content Include="assets\PDF\pdfjs-dist-2.11.338\web\pdf_viewer.css" />
     <Content Include="assets\PDF\pdfjs-dist-2.11.338\web\pdf_viewer.js" />
+    <Content Include="assets\sweetalert2.all.min.js" />
     <Content Include="assets\SweetAlert\sweetalert2.all.min.js" />
     <Content Include="assets\SweetAlert\sweetalert2.min.css" />
     <Content Include="assets\welcome.gif" />
@@ -3957,6 +3963,8 @@
     <Content Include="Views\User\Logout.cshtml" />
     <Content Include="Views\ImageUpload\UploadDpCodeFiles.cshtml" />
     <Content Include="Views\Gallery\Index.cshtml" />
+    <Content Include="Views\Gallery\CPPCVIEW.cshtml" />
+    <Content Include="Views\PensionClaim\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -27,7 +27,7 @@ namespace PENISON_MANAGEMENT_SYSTEM.Controllers
         }
 
         
-        [HttpPost] //
+        [HttpPost]
         public ActionResult Login(LoginModel loginModel)
         {
             
